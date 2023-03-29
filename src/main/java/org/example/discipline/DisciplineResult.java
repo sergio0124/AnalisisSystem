@@ -1,5 +1,6 @@
 package org.example.discipline;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.example.plan.Plan;
 
@@ -11,18 +12,17 @@ import java.util.List;
 @Data
 public class DisciplineResult {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Long id;
+
     String resultId;
 
     Long academicPlanId;
     String typeOfResult;
     Integer priority;
+    @JsonProperty
     String DisciplineResultName;
+    @JsonProperty
     String DisciplineResultNameFull;
 
-    @ManyToMany(mappedBy = "DisciplineResultsList")
-    List<Discipline> disciplines;
-
-    @ManyToOne()
-    @JoinColumn(name = "plan_id")
-    Plan plan;
 }
