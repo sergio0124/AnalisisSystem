@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.AllArgsConstructor;
 import org.example.discipline.DisciplineResult;
+import org.example.discipline.DisciplineResultRepository;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,21 +24,28 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
 public class PlanService {
-    String ATHENE_REPO = "http://plans.athene.tech/swagger-ui/index.html#/get-controller/getPlansUsingGET";
+    final String ATHENE_REPO = "http://plans.athene.tech/swagger-ui/index.html#/get-controller/getPlansUsingGET";
     PlanRepository planRepository;
+    DisciplineResultRepository disciplineResultRepository;
 
-    public void save(List<Plan> plans) {
+    public void savePlan(List<Plan> plans) {
         planRepository.saveAll(plans);
+    }
+
+    public void saveResults(List<DisciplineResult> disciplineResults){
+        disciplineResultRepository.saveAll(disciplineResults);
     }
 
     public void getPlanAndSave() throws URISyntaxException, IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
         var json = getJson();
+
         var plans = getPlan(json);
         var results = getResults(json);
-        save(plans);
+
+        savePlan(plans);
+        saveResults(results);
     }
 
     private List<DisciplineResult> getResults(JsonObject json) throws JsonProcessingException {
