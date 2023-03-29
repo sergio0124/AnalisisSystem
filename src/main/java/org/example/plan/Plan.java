@@ -45,9 +45,6 @@ public class Plan {
     Float academicPlanWeekZET;
     String academicPlanComment;
 
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    List<DisciplineResult> disciplineResults;
-
     @JsonProperty("DisciplinesOfPlan")
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Discipline> DisciplinesOfPlan;
