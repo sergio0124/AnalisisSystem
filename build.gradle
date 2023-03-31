@@ -19,21 +19,24 @@ dependencies {
     implementation 'junit:junit:4.13.1'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+    implementation 'org.springframework.boot:spring-boot-starter-freemarker'
     implementation "org.springframework.boot:spring-boot-starter-security"
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
+    implementation 'com.mysql:mysql-connector-j:8.0.31'
+    implementation 'org.modelmapper:modelmapper:3.1.0'
+
+
+    implementation 'net.javacrumbs.shedlock:shedlock-spring:4.42.0'
+    implementation 'net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.42.0'
 
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
-    implementation 'com.mysql:mysql-connector-j:8.0.31'
-
-    implementation 'org.thymeleaf:thymeleaf:3.1.1.RELEASE'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:3.0.5'
-
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-
     implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'net.sf.dozer:dozer:5.5.1'
 }
 
 test {

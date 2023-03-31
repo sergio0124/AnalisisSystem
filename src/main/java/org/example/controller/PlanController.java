@@ -1,16 +1,10 @@
 package org.example.controller;
 
 import lombok.AllArgsConstructor;
-import org.example.plan.PlanRepository;
 import org.example.plan.PlanService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.Calendar;
-import java.util.Date;
 
 @Controller
 @AllArgsConstructor

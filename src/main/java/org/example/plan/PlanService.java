@@ -29,6 +29,11 @@ public class PlanService {
     DisciplineResultRepository disciplineResultRepository;
 
     public void savePlan(List<Plan> plans) {
+        plans.forEach(v -> {
+            v.getDisciplinesOfPlan().forEach(d -> {
+                d.setPlan(v);
+            });
+        });
         planRepository.saveAll(plans);
     }
 
@@ -52,11 +57,10 @@ public class PlanService {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        List<DisciplineResult> list = mapper
+        return mapper
                 .readValue(json.get("DisciplineResults")
                         .toString(), new TypeReference<>() {
                 });
-        return list;
     }
 
     private JsonObject getJson() throws URISyntaxException, IOException {
