@@ -18,6 +18,7 @@ public class Discipline {
     String academicPlanDisciplineId;
 
     String academicPlanSemesterName;
+    String academicPlanId;
     Short academicPlanSemesterNumber;
     String academicPlanDisciplineBlock;
     String academicPlanTypeOfBlock;
