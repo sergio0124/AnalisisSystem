@@ -81,6 +81,9 @@ public class UserService implements UserDetailsService {
         if (userDTO.getUsername() != null) {
             user.setUsername(userDTO.getUsername());
         }
+        if (userDTO.getFullname() != null) {
+            user.setFullname(userDTO.getFullname());
+        }
 
         return mappingUser.mapToUserDto(userRepo.save(user));
     }
@@ -115,20 +118,17 @@ public class UserService implements UserDetailsService {
         return mappingUser.mapToUserDto(user);
     }
 
-    public List<UserDTO> findUsersByRole(Pageable pageable, Collection<Role> roles) {
-        return userRepo.findUsersByRolesIsIn(new HashSet<>(roles), pageable)
-                .getContent()
+    public List<UserDTO> findUsersByRole(Collection<Role> roles) {
+        return userRepo.findUsersByRolesIsIn(new HashSet<>(roles))
                 .stream()
                 .map(mappingUser::mapToUserDto)
                 .toList();
     }
 
-    public List<UserDTO> findUsersByRoleAndSearch(Pageable pageable,
-                                                  Collection<Role> roles,
+    public List<UserDTO> findUsersByRoleAndSearch(Collection<Role> roles,
                                                   String search) {
         return userRepo.findUsersByRolesIsInAndUsernameContainsIgnoreCase(
-                        new HashSet<>(roles), search, pageable)
-                .getContent()
+                        new HashSet<>(roles), search)
                 .stream()
                 .map(mappingUser::mapToUserDto)
                 .toList();

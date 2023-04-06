@@ -26,6 +26,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false, unique = true)
+    private String fullname;
+
     @CreatedDate
     private Timestamp registrationDate = new Timestamp(new Date().getTime());
 

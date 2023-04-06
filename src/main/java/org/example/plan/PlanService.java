@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.example.discipline.DisciplineResult;
 import org.example.discipline.DisciplineResultRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -91,5 +92,14 @@ public class PlanService {
                         .toString(), new TypeReference<>() {
                 });
         return list;
+    }
+
+    public List<Plan> getAllPlans() {
+        return planRepository.findAllByOrderByAcademicPlanIdDesc();
+    }
+
+    @Transactional
+    public void deletePlan(String academicPlanId) {
+        planRepository.deletePlanByAcademicPlanId(academicPlanId);
     }
 }

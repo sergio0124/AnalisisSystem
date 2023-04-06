@@ -1,39 +1,38 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Log in</title>
-    <link href="/static/css/form.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Вход</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+          integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+
 </head>
 <body>
 
-<#if RequestParameters.error??>
-    <div class="form">Неверный логин или пароль</div>
-<#elseif RequestParameters.logout??>
-    <div class="form">Вы вышли из своего аккаунта</div>
-<#elseif status??>
-    <p>
-        ${status}
-    </p>
-<#elseif message??>
-    <p>
-        ${message}
-    </p>
-</#if>
 
+<div style="display: flex; justify-content: center; align-items: center; margin-top: 100px;">
+    <p class="h2">Вход</p>
 </div>
-<div class="form"><b>Вход</b></div>
 
-<form action="/authenticateUser" method="post">
-    <div class="form"><label > Логин : <input type="text" name="username"/> </label></div>
-    <div class="form"><label > Пароль : <input type="password" name="password"/> </label></div>
-    <div><input class="form button" type="submit" value="Войти"/></div>
-</form>
+<div style="display: flex; justify-content: center; align-items: center; margin-top: 100px;">
 
-<p></p>
-<div>
-<button class="form button">Регистрация </button>
-<button class="form button">Восстановление пароля </button>
+    <form style="width: 500px;" action="/authenticateUser" method="post">
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Логин</label>
+            <input type="text" name="username" class="form-control" id="exampleInputEmail1"
+                   aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Пароль</label>
+            <input type="password" name="password" class="form-control" id="exampleInputPassword2">
+        </div>
+        <button type="submit" class="btn btn-primary">Войти</button>
+    </form>
 </div>
+
+
 </body>
 </html>

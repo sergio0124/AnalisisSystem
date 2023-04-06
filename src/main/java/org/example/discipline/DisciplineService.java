@@ -13,4 +13,8 @@ public class DisciplineService {
     public void save(List<Discipline> disciplines){
         disciplineRepository.saveAll(disciplines);
     }
+
+    public List<Discipline> getDisciplinesByPlanId(String academicPlanId) {
+        return disciplineRepository.getDisciplinesByAcademicPlanId(academicPlanId);
+    }
 }

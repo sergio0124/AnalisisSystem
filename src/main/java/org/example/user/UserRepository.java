@@ -18,9 +18,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findUserById(Long id);
 
-    Page<User> findUsersByRolesIsIn(Set<Role> roles, Pageable pageable);
+    List<User> findUsersByRolesIsIn(Set<Role> roles);
 
-    Page<User> findUsersByRolesIsInAndUsernameContainsIgnoreCase(Set<Role> roles, String username, Pageable pageable);
+    List<User> findUsersByRolesIsInAndUsernameContainsIgnoreCase(Set<Role> roles, String username);
 
     Optional<User> findUserByActivationCode(String activationCode);
 }
