@@ -1,7 +1,6 @@
 package org.example.config;
 
 import org.dozer.DozerBeanMapper;
-import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,7 +15,7 @@ public class MvcConfig implements WebMvcConfigurer {
 
 
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/login").setViewName("account/login_user");
+        registry.addViewController("/login").setViewName("login_user");
     }
 
     @Bean
@@ -31,9 +30,6 @@ public class MvcConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/public/**")
                 .addResourceLocations("classpath:/public/");
-
-        registry.addResourceHandler("/templates/**")
-                .addResourceLocations("classpath:/templates/");
     }
 
     @Bean

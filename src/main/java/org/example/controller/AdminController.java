@@ -2,8 +2,6 @@ package org.example.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.user.*;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -20,33 +18,26 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AdminController {
 
-    private static final int PAGE_SIZE = 10;
-
     private final UserService userService;
     private final MappingUser mappingUser;
 
     @GetMapping("admin/")
-    String getRepostPage(@RequestParam(value = "page", required = false) Optional<Integer> pageNumber,
-                         @RequestParam(required = false) Optional<String> search,
+    String getRepostPage(@RequestParam(required = false) Optional<String> search,
                          Map<String, Object> model,
                          @AuthenticationPrincipal User user) {
 
-        int page = pageNumber.orElse(0);
-        Pageable pageable = PageRequest.of(page, PAGE_SIZE);
         List<UserDTO> users;
         if (search.isPresent()) {
             String str = search.get();
-            users = userService.findUsersByRoleAndSearch(pageable,
-                    List.of(Role.RULER, Role.TEACHER), str);
+            users = userService.findUsersByRoleAndSearch(List.of(Role.RULER, Role.TEACHER), str);
             model.put("search", str);
         } else {
-            users = userService.findUsersByRole(pageable, List.of(Role.ADMIN));
+            users = userService.findUsersByRole(List.of(Role.RULER, Role.TEACHER));
         }
-        model.put("admins", users);
-        model.put("page", page);
+        model.put("users", users);
         model.put("user", mappingUser.mapToUserDto(user));
 
-        return "main_admin_home_page";
+        return "usersListPage";
     }
 
     @GetMapping("admin/save_user")
@@ -59,12 +50,12 @@ public class AdminController {
             if (userDTO == null) {
                 model.put("message", "Пользователь не найден");
             } else {
-                model.put("admin", userDTO);
+                model.put("ur", userDTO);
             }
         }
         model.put("user", mappingUser.mapToUserDto(user));
 
-        return "save_admin";
+        return "save_user";
     }
 
 
@@ -72,7 +63,8 @@ public class AdminController {
     ResponseEntity<Object> saveAdmin(@RequestBody UserDTO userDTO) {
         UserDTO res;
         if (userDTO.getId() != null) {
-            res = userService.updateUser(userDTO);
+            return ResponseEntity.badRequest()
+                    .body("Нельзя изменять пользователей");
         } else {
             res = userService.registerUser(userDTO);
         }
@@ -84,28 +76,14 @@ public class AdminController {
         return ResponseEntity.ok("Пользователь создан");
     }
 
-    @GetMapping("admin/delete_user")
-    private String deleteAdminPage(@RequestParam Long userId,
-                                   Map<String, Object> model,
-                                   @AuthenticationPrincipal User user) {
-        UserDTO userDTO = userService.loadUserById(userId);
-        if (userDTO != null) {
-            model.put("admin", userDTO);
-        } else {
-            model.put("message", "Пользователь с таким id не найден");
-        }
-        model.put("user", mappingUser.mapToUserDto(user));
-        return "delete_admin";
-    }
-
 
     @PostMapping("admin/delete_user")
-    private ResponseEntity<Object> deleteAdmin(@RequestParam Long userId) {
-        UserDTO userDTO = userService.loadUserById(userId);
-        if (userDTO == null) {
+    ResponseEntity<Object> deleteAdmin(@RequestBody UserDTO userDTO) {
+        UserDTO user = userService.loadUserById(userDTO.getId());
+        if (user == null) {
             return ResponseEntity.badRequest().body("Пользователь не найден");
         }
-        userService.deleteUser(userDTO);
+        userService.deleteUser(user);
         return ResponseEntity.ok("Пользователь удалён");
     }
 }

@@ -1,4 +1,4 @@
 function search(){
     let search = document.getElementById("search").value;
-    window.location.href = '/main_admin/?search=' + search;
+    window.location.href = '/admin/?search=' + search;
 }
