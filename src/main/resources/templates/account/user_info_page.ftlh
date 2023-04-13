@@ -19,15 +19,38 @@
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="/plan/">Планы</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/disciplines/">Дисциплины</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Контингент студентов</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Формирование отчетов</a>
-                    </li>
+                    <#list user.roles?filter(x -> x == "ADMIN") as x>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/plan/">Планы</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Контингент студентов</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/">Управление списком пользователей</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/disciplines/">Дисциплины</a>
+                        </li>
+                    </#list>
+                    <#list user.roles?filter(x -> x == "TEACHER") as x>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/disciplines/">Дисциплины</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/books/">Методические материалы</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/subscribes/">Подписки</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/notifications/">Уведомления</a>
+                        </li>
+                    </#list>
                 </ul>
             </div>
             <div class="d-flex">

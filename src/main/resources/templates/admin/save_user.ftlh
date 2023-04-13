@@ -17,16 +17,18 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="/plan/">Планы</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/disciplines/">Дисциплины</a>
+                    <a class="nav-link" href="/plan/">Планы</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Контингент студентов</a>
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Формирование отчетов</a>
+                    <a class="nav-link" href="/admin/">Управление списком пользователей</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/disciplines/">Дисциплины</a>
                 </li>
             </ul>
         </div>
@@ -50,7 +52,7 @@
 
 <#if ur??>
 
-    <div style="justify-content: center; width: 500px; align-items: center; margin-top: 100px;">
+    <div style="width: 500px; justify-content: center; align-items: center; margin-top: 100px; margin-left: auto; margin-right: auto;">
 
         <div class="mb-3">
             <label class="form-label">Логин</label>
@@ -77,7 +79,7 @@
 
 <#else>
 
-    <div style="justify-content: center; width: 500px; align-items: center; margin-top: 100px;">
+    <div style="width: 500px; justify-content: center; align-items: center; margin-top: 100px; margin-left: auto; margin-right: auto;">
 
         <div class="mb-3">
             <label class="form-label">Логин</label>

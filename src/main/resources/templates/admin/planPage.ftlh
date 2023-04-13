@@ -18,22 +18,24 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/plan/">Планы</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/disciplines/">Дисциплины</a>
+                        <a class="nav-link" href="/plan/">Планы</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Контингент студентов</a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Формирование отчетов</a>
+                        <a class="nav-link" href="/admin/">Управление списком пользователей</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/disciplines/">Дисциплины</a>
                     </li>
                 </ul>
             </div>
             <div class="d-flex">
                 <ul class="navbar-nav">
-                    <a class="nav-link active" aria-current="page" href="/user/user_info">Пользователь: ${user.id}</a>
+                    <a class="nav-link active" aria-current="page" href="/user/user_info">Пользователь: ${user.username}</a>
                     <a class="nav-link active" aria-current="page" href="/logout">Выйти</a>
                 </ul>
             </div>
