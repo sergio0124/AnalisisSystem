@@ -20,22 +20,25 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/plan/">Планы</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/disciplines/">Дисциплины</a>
+                        <a class="nav-link" href="/plan/">Планы</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Контингент студентов</a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Формирование отчетов</a>
+                        <a class="nav-link" href="/admin/">Управление списком пользователей</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/disciplines/">Дисциплины</a>
                     </li>
                 </ul>
             </div>
             <div class="d-flex">
                 <ul class="navbar-nav">
-                    <a class="nav-link active" aria-current="page" href="/user/user_info">Пользователь: ${user.username}</a>
+                    <a class="nav-link active" aria-current="page"
+                       href="/user/user_info">Пользователь: ${user.username}</a>
                     <a class="nav-link active" aria-current="page" href="/logout">Выйти</a>
                 </ul>
             </div>
@@ -44,7 +47,9 @@
     <div style="padding: 20px;">
         <div class="d-flex gap-2">
             <h2>Пользователи системы</h2>
-            <button class="btn btn-outline-primary me-md-2 btn-sm" type="button" onclick="document.location.href = 'save_user'">Зарегистрировать пользователя</button>
+            <button class="btn btn-outline-primary me-md-2 btn-sm" type="button"
+                    onclick="document.location.href = 'save_user'">Зарегистрировать пользователя
+            </button>
         </div>
 
 
@@ -72,14 +77,17 @@
                     <tr>
                         <th scope="row">${ur.username}</th>
                         <td>${ur.fullname}</td>
-                        <td><#list ur.roles as role>
-                            ${role}
-                        </#list></td>
+                        <td>
+                            <#list ur.roles as role>
+                                ${role}
+                            </#list></td>
                         <td>${ur.registrationDate?date}</td>
                         <td>
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-<#--                                <button class="btn btn-outline-success" type="submit" onclick="document.location.href = 'save_user?userId=${ur.id}'">Редактировать</button>-->
-                                <button class="btn btn-outline-success" type="submit" onclick="delete_user(${ur.id}, this)">Удалить</button>
+                                <#--                                <button class="btn btn-outline-success" type="submit" onclick="document.location.href = 'save_user?userId=${ur.id}'">Редактировать</button>-->
+                                <button class="btn btn-outline-success" type="submit"
+                                        onclick="delete_user(${ur.id}, this)">Удалить
+                                </button>
                             </div>
                         </td>
                     </tr>
