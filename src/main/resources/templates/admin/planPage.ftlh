@@ -75,17 +75,6 @@
             </#list>
 
 
-            <tr>
-                <th scope="row">1</th>
-                <td>Информатика и вычислительная техника</td>
-                <td>Бакалавриат, Очная</td>
-                <td>
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <button class="btn btn-primary me-md-2" type="button">Удалить</button>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
         </table>
     </div>
 

@@ -88,52 +88,134 @@
 
         </div>
 
+        <div style="margin-top: 40px;">
+            <h3>Дисциплины без привязанных материалов:</h3>
+            <div style="overflow-y: scroll; height:400px;">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">План</th>
+                        <th scope="col">Специалитет</th>
+                        <th scope="col">Форма</th>
+                        <th scope="col">Приоритет</th>
+                        <th scope="col">Действие</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- вот это потом в цикл вставить -->
+                    <#list nodisc as plan>
+                        <tr>
+                            <th scope="row">${plan.academicPlanId}</th>
+                            <td>${plan.academicPlanQualificationName}</td>
+                            <td>${plan.academicPlanSpecialtyProfile}, ${plan.academicPlanStudyForm}
+                                , ${plan.academicPlanComment}</td>
+                            <td>${plan.value}</td>
+                            <td>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button class="btn btn-primary me-md-2" type="button"
+                                            onclick="delete_plan(${plan.academicPlanId?string})">Удалить
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </#list>
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="d-flex" role="search" style="width: 500px; margin-top: 20px;">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="search">
-            <button class="btn btn-outline-success" onclick="search()">Поиск</button>
         </div>
 
 
-        <table class="table table-hover" style="margin-top: 20px;">
-            <thead>
-            <tr>
-                <th scope="col">Логин</th>
-                <th scope="col">Полное имя</th>
-                <th scope="col">Роли</th>
-                <th scope="col">Дата регистрации</th>
-                <th scope="col"></th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- вот это потом в цикл вставить -->
-            <#if users??>
-                <#list users as ur>
-
+        <div style="margin-top: 40px;">
+            <h3>Дисциплины c привязанными материалами, но без оценки сопоставления:</h3>
+            <div style="overflow-y: scroll; height:400px;">
+                <table class="table table-hover">
+                    <thead>
                     <tr>
-                        <th scope="row">${ur.username}</th>
-                        <td>${ur.fullname}</td>
-                        <td>
-                            <#list ur.roles as role>
-                                ${role}
-                            </#list></td>
-                        <td>${ur.registrationDate?date}</td>
-                        <td>
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <#--                                <button class="btn btn-outline-success" type="submit" onclick="document.location.href = 'save_user?userId=${ur.id}'">Редактировать</button>-->
-                                <button class="btn btn-outline-success" type="submit"
-                                        onclick="delete_user(${ur.id}, this)">Удалить
-                                </button>
-                            </div>
-                        </td>
+                        <th scope="col">План</th>
+                        <th scope="col">Специалитет</th>
+                        <th scope="col">Форма</th>
+                        <th scope="col">Приоритет</th>
+                        <th scope="col">Действие</th>
                     </tr>
+                    </thead>
+                    <tbody>
+                    <!-- вот это потом в цикл вставить -->
+                    <#list normdisc as plan>
+                        <tr>
+                            <th scope="row">${plan.academicPlanId}</th>
+                            <td>${plan.academicPlanQualificationName}</td>
+                            <td>${plan.academicPlanSpecialtyProfile}, ${plan.academicPlanStudyForm}
+                                , ${plan.academicPlanComment}</td>
+                            <td>${plan.value}</td>
+                            <td>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button class="btn btn-primary me-md-2" type="button"
+                                            onclick="delete_plan(${plan.academicPlanId?string})">Удалить
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </#list>
+                    </tbody>
+                </table>
+            </div>
 
-                </#list>
-            </#if>
+        </div>
 
 
-            </tbody>
-        </table>
+
+        <div style="margin-top: 40px;">
+            <h3>Дисциплины с заполненной обеспеченностью</h3>
+            <div style="overflow-y: scroll; height:400px;">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">План</th>
+                        <th scope="col">Специалитет</th>
+                        <th scope="col">Форма</th>
+                        <th scope="col">Приоритет</th>
+                        <th scope="col">Действие</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- вот это потом в цикл вставить -->
+                    <#list okdisc as plan>
+                        <tr>
+                            <th scope="row">${plan.academicPlanId}</th>
+                            <td>${plan.academicPlanQualificationName}</td>
+                            <td>${plan.academicPlanSpecialtyProfile}, ${plan.academicPlanStudyForm}
+                                , ${plan.academicPlanComment}</td>
+                            <td>${plan.value}</td>
+                            <td>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button class="btn btn-primary me-md-2" type="button"
+                                            onclick="delete_plan(${plan.academicPlanId?string})">Удалить
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </#list>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+
+        <div style="margin-top: 30px">
+            <h3>Итоги</h3>
+            <div style="margin-top: 10px">
+                Незаполненных дисциплин: ${nodisc?size},
+                Частично заполненных: ${normdisc?size},
+                Заполненных: ${okdisc?size}
+            </div>
+            <div>
+
+            </div>
+        </div>
+
+
     </div>
 
 </div>
