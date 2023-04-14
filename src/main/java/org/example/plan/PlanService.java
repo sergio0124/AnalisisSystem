@@ -19,7 +19,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -29,16 +32,26 @@ public class PlanService {
     PlanRepository planRepository;
     DisciplineResultRepository disciplineResultRepository;
 
-    public void savePlan(List<Plan> plans) {
+    private void savePlan(List<Plan> plans, List<DisciplineResult> disciplineResults) {
+        Map<String, DisciplineResult> map = new HashMap<>();
+        for (DisciplineResult dr : disciplineResults) {
+            map.put(dr.getResultId(), dr);
+        }
         plans.forEach(v -> {
             v.getDisciplinesOfPlan().forEach(d -> {
                 d.setPlan(v);
+                var list = d.getDisciplineResults();
+                d.getDisciplineResultsList().forEach(rec->{
+                    var res = map.get(rec);
+                    list.add(res);
+                    res.getDisciplines().add(d);
+                });
             });
         });
         planRepository.saveAll(plans);
     }
 
-    public void saveResults(List<DisciplineResult> disciplineResults){
+    private void saveResults(List<DisciplineResult> disciplineResults){
         disciplineResultRepository.saveAll(disciplineResults);
     }
 
@@ -50,7 +63,7 @@ public class PlanService {
         var plans = getPlan(json);
         var results = getResults(json);
 
-        savePlan(plans);
+        savePlan(plans, results);
         saveResults(results);
     }
 
@@ -83,7 +96,7 @@ public class PlanService {
     }
 
 
-    public List<Plan> getPlan(JsonObject json) throws JsonProcessingException {
+    private List<Plan> getPlan(JsonObject json) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
@@ -97,7 +110,9 @@ public class PlanService {
     public List<Plan> getAllPlans() {
         return planRepository.findAllByOrderByAcademicPlanIdDesc();
     }
-
+    public Plan getPlanById(String academicPlanId){
+        return planRepository.findPlanByAcademicPlanId(academicPlanId);
+    }
     @Transactional
     public void deletePlan(String academicPlanId) {
         planRepository.deletePlanByAcademicPlanId(academicPlanId);

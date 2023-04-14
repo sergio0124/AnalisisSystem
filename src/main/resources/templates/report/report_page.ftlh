@@ -2,8 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 
-    <script src="select_discipline.js"></script>
-    <title>Книгообеспеченность дисциплины</title>
+    <script src="delete_user.js"></script>
+    <script src="search.js"></script>
+    <title>Информация о пользователе</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
@@ -82,86 +83,57 @@
         </div>
     </nav>
     <div style="padding: 20px;">
-        <div style="margin-top: 30px">
-            <h2>Книгообеспеченность дисциплины ${discipline.academicPlanDisciplineName}</h2>
-
-            <h3>Данные о дисциплине:</h3>
-
-            <div>
-                ${discipline.academicPlanDisciplineId}, ${discipline.academicPlanDisciplineName}
-                , ${discipline.academicPlanForm}, ${discipline.academicPlanSemesterName}
-            </div>
-
-            <div>
-                <button class="btn btn-primary me-md-2" type="button" onclick="subscribe_discipline(${discipline.id})">
-                    Подписаться
-                </button>
-            </div>
+        <div class="d-flex gap-2">
+            <h2>Собранные данные</h2>
 
         </div>
 
 
-        <div style="justify-content: center; align-items: center; margin-top: 30px">
-
-            <div><h2>Литература:</h2></div>
-            <div class="mb-3">
-                <label class="form-label">Вставьте название материала, загрузка которого должна произойти (Размещенный
-                    файл в формате .pdf)</label>
-                <input type="text" class="form-control" id="source" aria-describedby="emailHelp">
-            </div>
-            <div>
-                <button class="btn btn-primary" onclick="load_book()">Загрузить</button>
-            </div>
-
+        <div class="d-flex" role="search" style="width: 500px; margin-top: 20px;">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="search">
+            <button class="btn btn-outline-success" onclick="search()">Поиск</button>
         </div>
 
 
-        <div>
-            <h2>Текущая обеспеченность учебно-методическими материалами</h2>
+        <table class="table table-hover" style="margin-top: 20px;">
+            <thead>
+            <tr>
+                <th scope="col">Логин</th>
+                <th scope="col">Полное имя</th>
+                <th scope="col">Роли</th>
+                <th scope="col">Дата регистрации</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- вот это потом в цикл вставить -->
+            <#if users??>
+                <#list users as ur>
 
-            <#list books as book>
-            <div style="display: flex; border-radius: 10px; background-color: #80b4ff">
+                    <tr>
+                        <th scope="row">${ur.username}</th>
+                        <td>${ur.fullname}</td>
+                        <td>
+                            <#list ur.roles as role>
+                                ${role}
+                            </#list></td>
+                        <td>${ur.registrationDate?date}</td>
+                        <td>
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <#--                                <button class="btn btn-outline-success" type="submit" onclick="document.location.href = 'save_user?userId=${ur.id}'">Редактировать</button>-->
+                                <button class="btn btn-outline-success" type="submit"
+                                        onclick="delete_user(${ur.id}, this)">Удалить
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
 
-
-                <div style="padding:5px; width: 50%">
-                    <h3>Данные:</h3>
-                    <div><b>Название:</b> ${book.name}</div>
-                    <div><b>Аннотация:</b> ${book.anno}</div>
-                    <div><b>Автор:</b> ${book.author}</div>
-                    <div><b>Год:</b> ${book.year}</div>
-                </div>
-
-                <div style="padding:5px; width: 50%">
-                    <h3>Сопоставление:</h3>
-                    <div><b>Оценка:</b> ${book.name}</div>
-                    <div><b>Тип:</b> ${book.anno}</div>
-                    <div><b>Дата:</b> ${book.author}</div>
-                    <div><b>Описание:</b> ${book.year}</div>
-                </div>
-
-            </div>
-
-
-            <#list user.roles?filter(x -> x == "RULER") as x>
-                <div style="display: flex">
-                    <div style="align-items:center; padding:5px; width: 50%">
-                        <button class="btn btn-primary" style="margin-left: auto; margin-right: auto;"
-                                onclick="delete_book()">Удалить материал
-                        </button>
-                    </div>
-                    <div style="align-items:center; padding:5px; width: 50%">
-                        <button class="btn btn-primary" style="margin-left: auto; margin-right: auto;"
-                                onclick="compare_book()">Оценка сопоставимости
-                        </button>
-                    </div>
-                </div>
-            </#list>
+                </#list>
+            </#if>
 
 
-        </div>
-        </#list>
-
-
+            </tbody>
+        </table>
     </div>
 
 </div>

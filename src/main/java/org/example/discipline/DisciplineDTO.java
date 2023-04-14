@@ -5,20 +5,15 @@ import lombok.Data;
 import org.example.comparison.Comparison;
 import org.example.plan.Plan;
 import org.example.subscribe.Subscribe;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "discipline")
 @Data
-public class Discipline {
+public class DisciplineDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
     Long id;
     String academicPlanDisciplineId;
 
@@ -39,25 +34,18 @@ public class Discipline {
     Integer academicPlanDisciplineZET;
     Float academicPlanDisciplineFormZET;
 
-    @ElementCollection
-    @JsonProperty("DisciplineResultsList")
-    List<String> DisciplineResultsList  = new ArrayList<>();
+    List<String> DisciplineResultsList = new ArrayList<>();
 
-    @ManyToOne()
-    @JoinColumn(name = "plan_id")
     Plan plan;
 
-    @OneToMany(mappedBy = "discipline", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     List<Comparison> comparisons;
 
-    @OneToMany(mappedBy = "discipline", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     List<Subscribe> subscribes;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(
-            name = "result_discipline",
-            joinColumns = { @JoinColumn(name = "discipline_id") },
-            inverseJoinColumns = { @JoinColumn(name = "result_id") }
-    )
     List<DisciplineResult> disciplineResults = new ArrayList<>();
+
+    Integer value = 0;
 }
+
+
+

@@ -5,6 +5,7 @@ import lombok.Data;
 import org.example.plan.Plan;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,4 +26,11 @@ public class DisciplineResult {
     @JsonProperty
     String DisciplineResultNameFull;
 
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "result_discipline",
+            joinColumns = { @JoinColumn(name = "result_id") },
+            inverseJoinColumns = { @JoinColumn(name = "discipline_id") }
+    )
+    List<Discipline> disciplines = new ArrayList<>();
 }

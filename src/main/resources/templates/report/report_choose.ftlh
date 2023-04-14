@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Информация о пользователе</title>
-    <script src="update_user.js"></script>
+
+    <script src="report.js"></script>
+    <title>Список дисциплин</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
@@ -16,9 +17,6 @@
             </a>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/plan/">Планы</a>
-                    </li>
                     <#list user.roles?filter(x -> x == "ADMIN") as x>
                         <li class="nav-item">
                             <a class="nav-link" href="/plan/">Планы</a>
@@ -75,34 +73,36 @@
             </div>
             <div class="d-flex">
                 <ul class="navbar-nav">
-                    <a class="nav-link active" aria-current="page" href="#">Пользователь: ${user.username}</a>
-                    <a class="nav-link" aria-current="page" href="/logout">Выйти</a>
+                    <a class="nav-link active" aria-current="page" href="/user/user_info">Пользователь: ${user.username}</a>
+                    <a class="nav-link active" aria-current="page" href="/logout">Выйти</a>
                 </ul>
             </div>
         </div>
     </nav>
+    <div style="padding: 20px;">
+        <form style="width: 500px;">
+            <div>
+                <label class="form-label">Выберите план</label>
+                <select class="form-select" aria-label="Default select example" id="plan_select">
 
-    <div style="display: flex; justify-content: center; align-items: center; margin-top: 100px;">
-        <div style="width: 500px;">
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Логин</label>
-                <input type="email" class="form-control" id="login" aria-describedby="emailHelp" value="${user.username}">
+                    <#list plans as plan>
+                        <option value="${plan.academicPlanId}">${plan.academicPlanQualificationName},
+                            ${plan.academicPlanSpecialtyProfile}, ${plan.academicPlanStudyForm}, ${plan.academicPlanComment}</option>
+                    </#list>
+
+                </select>
+                <div>
+                    <button class="btn btn-primary me-md-2" type="button" onclick="to_report(})">
+                        Создать отчет
+                    </button>
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Полное имя</label>
-                <input type="email" class="form-control" id="fullname" aria-describedby="emailHelp" value="${user.fullname}">
-            </div>
-            <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">Старый пароль</label>
-                <input type="password" class="form-control" id="old">
-            </div>
-            <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">Новый пароль</label>
-                <input type="password" class="form-control" id="new">
-            </div>
-            <button class="btn btn-primary" onclick="update_user(${user.id})">Сохранить</button>
-        </div>
+        </form>
+
+
+
     </div>
+
 </div>
 
 </body>

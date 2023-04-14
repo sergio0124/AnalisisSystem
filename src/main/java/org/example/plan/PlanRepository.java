@@ -8,6 +8,7 @@ import java.util.List;
 public interface PlanRepository extends JpaRepository<Plan, Long> {
 
     List<Plan> findAllByOrderByAcademicPlanIdDesc();
+    Plan findPlanByAcademicPlanId(String academicPlanId);
 
     void deletePlanByAcademicPlanId(String academicPlanId);
 }

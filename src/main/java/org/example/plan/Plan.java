@@ -48,4 +48,5 @@ public class Plan {
     @JsonProperty("DisciplinesOfPlan")
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Discipline> DisciplinesOfPlan;
+
 }

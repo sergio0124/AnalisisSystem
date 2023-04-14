@@ -17,4 +17,8 @@ public class DisciplineService {
     public List<Discipline> getDisciplinesByPlanId(String academicPlanId) {
         return disciplineRepository.getDisciplinesByAcademicPlanId(academicPlanId);
     }
+
+    public Discipline getDisciplineById(Long id){
+        return disciplineRepository.findById(id).orElse(null);
+    }
 }
