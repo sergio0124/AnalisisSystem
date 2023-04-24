@@ -19,7 +19,7 @@ import java.util.Optional;
 public class AdminController {
 
     private final UserService userService;
-    private final MappingUser mappingUser;
+    private final UserMapping userMapping;
 
     @GetMapping("admin/")
     String getRepostPage(@RequestParam(required = false) Optional<String> search,
@@ -35,7 +35,7 @@ public class AdminController {
             users = userService.findUsersByRole(List.of(Role.RULER, Role.TEACHER));
         }
         model.put("users", users);
-        model.put("user", mappingUser.mapToUserDto(user));
+        model.put("user", userMapping.mapToUserDto(user));
 
         return "usersListPage";
     }
@@ -53,7 +53,7 @@ public class AdminController {
                 model.put("ur", userDTO);
             }
         }
-        model.put("user", mappingUser.mapToUserDto(user));
+        model.put("user", userMapping.mapToUserDto(user));
 
         return "save_user";
     }

@@ -94,27 +94,24 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th scope="col">План</th>
-                        <th scope="col">Специалитет</th>
-                        <th scope="col">Форма</th>
+                        <th scope="col">id</th>
+                        <th scope="col">Наименование</th>
+                        <th scope="col">Формат</th>
                         <th scope="col">Приоритет</th>
-                        <th scope="col">Действие</th>
+                        <th scope="col"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <!-- вот это потом в цикл вставить -->
-                    <#list nodisc as plan>
+                    <#list nodisc as discipline>
                         <tr>
-                            <th scope="row">${plan.academicPlanId}</th>
-                            <td>${plan.academicPlanQualificationName}</td>
-                            <td>${plan.academicPlanSpecialtyProfile}, ${plan.academicPlanStudyForm}
-                                , ${plan.academicPlanComment}</td>
-                            <td>${plan.value}</td>
+                            <th scope="row">${discipline.academicPlanDisciplineId}</th>
+                            <td>${discipline.academicPlanDisciplineName}</td>
+                            <td>${discipline.academicPlanForm}, ${discipline.academicPlanSemesterName}</td>
+                            <td>${discipline.value}</td>
                             <td>
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <button class="btn btn-primary me-md-2" type="button"
-                                            onclick="delete_plan(${plan.academicPlanId?string})">Удалить
-                                    </button>
+                                    <button class="btn btn-primary me-md-2" type="button" onclick="go_to_books(${discipline.id})">Книгообеспеченность</button>
                                 </div>
                             </td>
                         </tr>
@@ -132,27 +129,24 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th scope="col">План</th>
-                        <th scope="col">Специалитет</th>
-                        <th scope="col">Форма</th>
+                        <th scope="col">id</th>
+                        <th scope="col">Наименование</th>
+                        <th scope="col">Формат</th>
                         <th scope="col">Приоритет</th>
-                        <th scope="col">Действие</th>
+                        <th scope="col"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <!-- вот это потом в цикл вставить -->
-                    <#list normdisc as plan>
+                    <#list normdisc as discipline>
                         <tr>
-                            <th scope="row">${plan.academicPlanId}</th>
-                            <td>${plan.academicPlanQualificationName}</td>
-                            <td>${plan.academicPlanSpecialtyProfile}, ${plan.academicPlanStudyForm}
-                                , ${plan.academicPlanComment}</td>
-                            <td>${plan.value}</td>
+                            <th scope="row">${discipline.academicPlanDisciplineId}</th>
+                            <td>${discipline.academicPlanDisciplineName}</td>
+                            <td>${discipline.academicPlanForm}, ${discipline.academicPlanSemesterName}</td>
+                            <td>${discipline.value}</td>
                             <td>
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <button class="btn btn-primary me-md-2" type="button"
-                                            onclick="delete_plan(${plan.academicPlanId?string})">Удалить
-                                    </button>
+                                    <button class="btn btn-primary me-md-2" type="button" onclick="go_to_books(${discipline.id})">Книгообеспеченность</button>
                                 </div>
                             </td>
                         </tr>
@@ -171,27 +165,24 @@
                 <table class="table table-hover">
                     <thead>
                     <tr>
-                        <th scope="col">План</th>
-                        <th scope="col">Специалитет</th>
-                        <th scope="col">Форма</th>
+                        <th scope="col">id</th>
+                        <th scope="col">Наименование</th>
+                        <th scope="col">Формат</th>
                         <th scope="col">Приоритет</th>
-                        <th scope="col">Действие</th>
+                        <th scope="col"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <!-- вот это потом в цикл вставить -->
-                    <#list okdisc as plan>
+                    <#list okdisc as discipline>
                         <tr>
-                            <th scope="row">${plan.academicPlanId}</th>
-                            <td>${plan.academicPlanQualificationName}</td>
-                            <td>${plan.academicPlanSpecialtyProfile}, ${plan.academicPlanStudyForm}
-                                , ${plan.academicPlanComment}</td>
-                            <td>${plan.value}</td>
+                            <th scope="row">${discipline.academicPlanDisciplineId}</th>
+                            <td>${discipline.academicPlanDisciplineName}</td>
+                            <td>${discipline.academicPlanForm}, ${discipline.academicPlanSemesterName}</td>
+                            <td>${discipline.value}</td>
                             <td>
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <button class="btn btn-primary me-md-2" type="button"
-                                            onclick="delete_plan(${plan.academicPlanId?string})">Удалить
-                                    </button>
+                                    <button class="btn btn-primary me-md-2" type="button" onclick="go_to_books(${discipline.id})">Книгообеспеченность</button>
                                 </div>
                             </td>
                         </tr>

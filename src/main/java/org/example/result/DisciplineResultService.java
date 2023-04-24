@@ -1,4 +1,4 @@
-package org.example.discipline;
+package org.example.result;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

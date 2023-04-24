@@ -1,18 +1,15 @@
 package org.example.plan;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-import org.example.discipline.Discipline;
+import lombok.Getter;
+import lombok.Setter;
+import org.example.discipline.DisciplineDTO;
 
-import javax.persistence.*;
 import java.util.List;
 
-@Entity
-@Table(name = "plan")
-@Data
-public class Plan {
+@Setter
+@Getter
+public class PlanDTO {
 
-    @Id
     String academicPlanId;
 
     String academicPlan;
@@ -44,8 +41,6 @@ public class Plan {
     Float academicPlanWeekZET;
     String academicPlanComment;
 
-    @JsonProperty("DisciplinesOfPlan")
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    List<Discipline> DisciplinesOfPlan;
+    List<DisciplineDTO> DisciplinesOfPlan;
 
 }

@@ -83,16 +83,16 @@
     </nav>
     <div style="padding: 20px;">
         <div style="margin-top: 30px">
-            <h2>Книгообеспеченность дисциплины ${discipline.academicPlanDisciplineName}</h2>
+            <h4>Книгообеспеченность дисциплины ${discipline.academicPlanDisciplineName}</h4>
 
-            <h3>Данные о дисциплине:</h3>
+            <h5>Данные о дисциплине:</h5>
 
-            <div>
+            <div style="margin-top: 10px;">
                 ${discipline.academicPlanDisciplineId}, ${discipline.academicPlanDisciplineName}
                 , ${discipline.academicPlanForm}, ${discipline.academicPlanSemesterName}
             </div>
 
-            <div>
+            <div style="margin-top: 10px">
                 <button class="btn btn-primary me-md-2" type="button" onclick="subscribe_discipline(${discipline.id})">
                     Подписаться
                 </button>
@@ -101,9 +101,9 @@
         </div>
 
 
-        <div style="justify-content: center; align-items: center; margin-top: 30px">
+        <div style="justify-content: center; align-items: center; margin-top: 30px; width: 500px;">
 
-            <div><h2>Литература:</h2></div>
+            <div><h4>Литература:</h4></div>
             <div class="mb-3">
                 <label class="form-label">Вставьте название материала, загрузка которого должна произойти (Размещенный
                     файл в формате .pdf)</label>
@@ -116,11 +116,11 @@
         </div>
 
 
-        <div>
-            <h2>Текущая обеспеченность учебно-методическими материалами</h2>
+        <div style="margin-top: 30px;">
+            <h4>Текущая обеспеченность учебно-методическими материалами</h4>
 
             <#list books as book>
-            <div style="display: flex; border-radius: 10px; background-color: #80b4ff">
+            <div style="display: flex; border-radius: 10px; background-color: #80b4ff; margin-top: 20px">
 
 
                 <div style="padding:5px; width: 50%">

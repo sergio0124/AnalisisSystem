@@ -1,4 +1,4 @@
-package org.example.controller;
+package org.example.plan;
 
 import lombok.AllArgsConstructor;
 import org.example.plan.Plan;

@@ -1,11 +1,14 @@
 package org.example.user;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 public class UserDTO {
     private Long id;
 

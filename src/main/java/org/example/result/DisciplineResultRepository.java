@@ -1,4 +1,4 @@
-package org.example.discipline;
+package org.example.result;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

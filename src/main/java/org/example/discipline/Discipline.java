@@ -4,9 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.example.comparison.Comparison;
 import org.example.plan.Plan;
+import org.example.result.DisciplineResult;
 import org.example.subscribe.Subscribe;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.ArrayList;

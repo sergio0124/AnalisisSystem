@@ -20,7 +20,7 @@ public class BaseController {
         if (roles.contains(Role.ADMIN)) {
             return "redirect:admin/";
         } else if (roles.contains(Role.RULER)) {
-            return "redirect:ruler/";
+            return "redirect:disciplines/";
         } else if (roles.contains(Role.TEACHER)) {
             return "redirect:disciplines/";
         }

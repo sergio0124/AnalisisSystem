@@ -1,7 +1,8 @@
-package org.example.discipline;
+package org.example.result;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.example.discipline.Discipline;
 import org.example.plan.Plan;
 
 import javax.persistence.*;

@@ -3,7 +3,6 @@ package org.example.user;
 import com.mysql.cj.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.example.service.MailSenderService;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,12 +20,12 @@ public class UserService implements UserDetailsService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserRepository userRepo;
 
-    private final MappingUser mappingUser;
+    private final UserMapping userMapping;
 
     private final MailSenderService mailSender;
 
     public UserDTO registerUser(UserDTO userDTO) {
-        User user = mappingUser.mapToUserEntity(userDTO);
+        User user = userMapping.mapToUserEntity(userDTO);
 
         if (user.getPassword() == null || user.getUsername() == null || user.getRoles().size() == 0) {
             return null;
@@ -52,7 +51,7 @@ public class UserService implements UserDetailsService {
         }
 
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        return mappingUser.mapToUserDto(userRepo.save(user));
+        return userMapping.mapToUserDto(userRepo.save(user));
     }
 
 
@@ -85,7 +84,7 @@ public class UserService implements UserDetailsService {
             user.setFullname(userDTO.getFullname());
         }
 
-        return mappingUser.mapToUserDto(userRepo.save(user));
+        return userMapping.mapToUserDto(userRepo.save(user));
     }
 
 
@@ -107,7 +106,7 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDTO loadUserDTOByUsername(String username) throws UsernameNotFoundException {
-        return mappingUser.mapToUserDto(userRepo.findByUsername(username).orElse(null));
+        return userMapping.mapToUserDto(userRepo.findByUsername(username).orElse(null));
     }
 
     public UserDTO loadUserById(Long userId) {
@@ -115,13 +114,13 @@ public class UserService implements UserDetailsService {
         if (user == null) {
             return null;
         }
-        return mappingUser.mapToUserDto(user);
+        return userMapping.mapToUserDto(user);
     }
 
     public List<UserDTO> findUsersByRole(Collection<Role> roles) {
         return userRepo.findUsersByRolesIsIn(new HashSet<>(roles))
                 .stream()
-                .map(mappingUser::mapToUserDto)
+                .map(userMapping::mapToUserDto)
                 .toList();
     }
 
@@ -130,7 +129,7 @@ public class UserService implements UserDetailsService {
         return userRepo.findUsersByRolesIsInAndUsernameContainsIgnoreCase(
                         new HashSet<>(roles), search)
                 .stream()
-                .map(mappingUser::mapToUserDto)
+                .map(userMapping::mapToUserDto)
                 .toList();
 
     }

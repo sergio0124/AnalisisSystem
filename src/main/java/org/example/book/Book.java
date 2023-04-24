@@ -5,6 +5,7 @@ import org.example.comparison.Comparison;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,5 +23,5 @@ public class Book {
     String introduction;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    List<Comparison> comparisons;
+    List<Comparison> comparisons = new ArrayList<>();
 }

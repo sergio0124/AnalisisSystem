@@ -1,16 +1,16 @@
 package org.example.user;
 
 import lombok.AllArgsConstructor;
-import org.dozer.DozerBeanMapper;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class MappingUser {
+public class UserMapping {
 
-    private DozerBeanMapper mapper;
+    private ModelMapper mapper;
 
     //из entity в dto
     public UserDTO mapToUserDto(User user) {
@@ -25,9 +25,9 @@ public class MappingUser {
     }
 
     //из dto в entity
-    public User mapToUserEntity(UserDTO dto) {
-        var user = mapper.map(dto, User.class);
-        user.setRoles(dto.getRoles().stream().map(Role::valueOf).collect(Collectors.toSet()));
+    public User mapToUserEntity(UserDTO userDTO) {
+        var user = mapper.map(userDTO, User.class);
+        user.setRoles(userDTO.getRoles().stream().map(Role::valueOf).collect(Collectors.toSet()));
         return user;
     }
 }

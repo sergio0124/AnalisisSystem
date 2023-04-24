@@ -1,16 +1,16 @@
 package org.example.discipline;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.example.comparison.Comparison;
 import org.example.plan.Plan;
-import org.example.subscribe.Subscribe;
+import org.example.result.DisciplineResultDTO;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class DisciplineDTO {
 
 
@@ -40,9 +40,7 @@ public class DisciplineDTO {
 
     List<Comparison> comparisons;
 
-    List<Subscribe> subscribes;
-
-    List<DisciplineResult> disciplineResults = new ArrayList<>();
+    List<DisciplineResultDTO> disciplineResults = new ArrayList<>();
 
     Integer value = 0;
 }

@@ -115,7 +115,7 @@
                         <td>${discipline.academicPlanForm}, ${discipline.academicPlanSemesterName}</td>
                         <td>
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <button class="btn btn-primary me-md-2" type="button" onclick="go_to_books(${discipline.id?replace("&nbsp","")})">Книгообеспеченность</button>
+                                <button class="btn btn-primary me-md-2" type="button" onclick="go_to_books(#{discipline.id})">Книгообеспеченность</button>
                             </div>
                         </td>
                     </tr>
