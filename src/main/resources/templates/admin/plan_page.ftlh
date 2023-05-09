@@ -41,16 +41,27 @@
             </div>
         </div>
     </nav>
-    <div style="margin-top: 20px;">
+    <div style="margin-top: 20px; margin-left: 20px;">
         <h2>Учебные планы</h2>
 
         <div class="d-flex" role="search" style="width: 500px; margin-top: 20px;">
-            <input class="form-control me-2" type="search" placeholder="Год до" aria-label="Search">
-            <input class="form-control me-2" type="search" placeholder="год после" aria-label="Search">
+            <input class="form-control me-2" type="number" min="2017" max="2027" placeholder="Начальный год" aria-label="Search" id="start-year">
+            <input class="form-control me-2" type="number" min="2017" max="2027" placeholder="Конечный год" aria-label="Search" id="end-year">
             <button class="btn btn-outline-success" onclick="load_plans()">Загрузка плана</button>
         </div>
 
-        <table class="table table-hover">
+
+        <div class="d-flex" role="search" style="margin-top: 20px; width: 600px;">
+            <label>Поиск планов по профилю специальности:</label>
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="search"
+                <#if RequestParameters.search??>
+                    value="${RequestParameters.search}"
+                </#if>
+            >
+            <button class="btn btn-primary" id="search" onclick="search()">Поиск</button>
+        </div>
+
+        <table class="table table-hover" id="plan_table">
             <thead>
             <tr>
                 <th scope="col">План</th>
@@ -59,7 +70,7 @@
                 <th scope="col">Действие</th>
             </tr>
             </thead>
-            <tbody>
+            <tbody id="plan_table_body">
             <!-- вот это потом в цикл вставить -->
             <#list plans as plan>
                 <tr>
@@ -76,6 +87,16 @@
 
 
         </table>
+
+        <div style="margin-top: 10px; display: flex; justify-content: center; align-items: center;">
+            <button style="margin-left: 5px; margin-right: 5px;" class="btn btn-primary" id="before" onclick="decrease_page()" disabled><</button>
+            <input style="margin-left: 5px; margin-right: 5px; width: 50px;" class="form-control" id="page" value="1" onchange="change_page()">
+            <button style="margin-left: 5px; margin-right: 5px;" class="btn btn-primary" id="after" onclick="increase_page()"
+            <#if plans?size < 20>
+                disabled
+            </#if>
+            >></button>
+        </div>
     </div>
 
 </div>

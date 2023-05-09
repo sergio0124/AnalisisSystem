@@ -3,6 +3,7 @@ package org.example.report;
 import lombok.AllArgsConstructor;
 import org.example.discipline.DisciplineDTO;
 import org.example.plan.Plan;
+import org.example.plan.PlanDTO;
 import org.example.plan.PlanService;
 import org.example.user.UserMapping;
 import org.example.user.User;
@@ -26,7 +27,7 @@ public class ReportController {
     @GetMapping("/report/")
     public String getChoosePage(@AuthenticationPrincipal User user,
                                 Map<String, Object> model) {
-        List<Plan> plans = planService.getAllPlans();
+        List<PlanDTO> plans = planService.getAllPlans();
         model.put("user", userMapping.mapToUserDto(user));
         model.put("plans", plans);
         return "report_choose";

@@ -4,6 +4,7 @@
 
     <script src="delete_user.js"></script>
     <script src="search.js"></script>
+    <script src="pagination.js"></script>
     <title>Информация о пользователе</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -54,8 +55,12 @@
 
 
         <div class="d-flex" role="search" style="width: 500px; margin-top: 20px;">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="search">
-            <button class="btn btn-outline-success" onclick="search()">Поиск</button>
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="search"
+                    <#if RequestParameters.search??>
+                value="${RequestParameters.search}"
+                    </#if>>
+            <button class="btn btn-outline-success" onclick="search()">Поиск
+            </button>
         </div>
 
 
@@ -69,7 +74,7 @@
                 <th scope="col"></th>
             </tr>
             </thead>
-            <tbody>
+            <tbody id="user_table_body">
             <!-- вот это потом в цикл вставить -->
             <#if users??>
                 <#list users as ur>
@@ -84,7 +89,6 @@
                         <td>${ur.registrationDate?date}</td>
                         <td>
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <#--                                <button class="btn btn-outline-success" type="submit" onclick="document.location.href = 'save_user?userId=${ur.id}'">Редактировать</button>-->
                                 <button class="btn btn-outline-success" type="submit"
                                         onclick="delete_user(${ur.id}, this)">Удалить
                                 </button>
@@ -94,10 +98,25 @@
 
                 </#list>
             </#if>
-
-
             </tbody>
         </table>
+
+
+        <div style="margin-top: 10px; display: flex; justify-content: center; align-items: center;">
+            <button style="margin-left: 5px; margin-right: 5px;" class="btn btn-primary" id="before"
+                    onclick="decrease_page()" disabled><
+            </button>
+            <input style="margin-left: 5px; margin-right: 5px; width: 50px;" class="form-control" id="page" value="1"
+                   onchange="change_page()">
+            <button style="margin-left: 5px; margin-right: 5px;" class="btn btn-primary" id="after"
+                    onclick="increase_page()"
+                    <#if users?size < 10>
+                        disabled
+                    </#if>
+            >>
+            </button>
+        </div>
+
     </div>
 
 </div>

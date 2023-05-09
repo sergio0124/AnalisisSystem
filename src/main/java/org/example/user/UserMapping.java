@@ -19,7 +19,7 @@ public class UserMapping {
         }
 
         UserDTO userDTO = mapper.map(user, UserDTO.class);
-        userDTO.setRoles(user.getRoles().stream().map(Role::name).collect(Collectors.toSet()));
+        userDTO.setRoles(user.getRoles().stream().map(Role::getTitle).collect(Collectors.toSet()));
 
         return userDTO;
     }

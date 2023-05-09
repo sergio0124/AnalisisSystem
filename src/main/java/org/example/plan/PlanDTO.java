@@ -41,6 +41,5 @@ public class PlanDTO {
     Float academicPlanWeekZET;
     String academicPlanComment;
 
-    List<DisciplineDTO> DisciplinesOfPlan;
 
 }

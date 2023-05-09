@@ -2,6 +2,9 @@ package org.example.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.user.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -17,7 +20,7 @@ import java.util.Optional;
 @Controller
 @RequiredArgsConstructor
 public class AdminController {
-
+    final private int PAGE_SIZE = 10;
     private final UserService userService;
     private final UserMapping userMapping;
 
@@ -25,20 +28,37 @@ public class AdminController {
     String getRepostPage(@RequestParam(required = false) Optional<String> search,
                          Map<String, Object> model,
                          @AuthenticationPrincipal User user) {
-
+        Pageable pageable = PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.ASC, "fullname"));
         List<UserDTO> users;
         if (search.isPresent()) {
             String str = search.get();
-            users = userService.findUsersByRoleAndSearch(List.of(Role.RULER, Role.TEACHER), str);
+            users = userService.findUsersByRoleAndSearch(List.of(Role.RULER, Role.TEACHER), str, pageable);
             model.put("search", str);
         } else {
-            users = userService.findUsersByRole(List.of(Role.RULER, Role.TEACHER));
+            users = userService.findUsersByRole(List.of(Role.RULER, Role.TEACHER), pageable);
         }
         model.put("users", users);
         model.put("user", userMapping.mapToUserDto(user));
 
-        return "usersListPage";
+        return "users_list_page";
     }
+
+
+    @PostMapping("admin/")
+    ResponseEntity<List<UserDTO>> getRepostPage(@RequestParam(required = false) Optional<String> search,
+                                          @RequestParam Integer page) {
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by(Sort.Direction.ASC, "fullname"));
+        List<UserDTO> users;
+        if (search.isPresent()) {
+            String str = search.get();
+            users = userService.findUsersByRoleAndSearch(List.of(Role.RULER, Role.TEACHER), str, pageable);
+        } else {
+            users = userService.findUsersByRole(List.of(Role.RULER, Role.TEACHER), pageable);
+        }
+
+        return ResponseEntity.ok(users);
+    }
+
 
     @GetMapping("admin/save_user")
     String getAdminSavePage(@RequestParam(required = false) Optional<Long> userId,

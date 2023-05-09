@@ -6,6 +6,7 @@ import org.example.comparison.Comparison;
 import org.example.plan.Plan;
 import org.example.result.DisciplineResult;
 import org.example.subscribe.Subscribe;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -17,13 +18,14 @@ import java.util.List;
 public class Discipline {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    String id;
     String academicPlanDisciplineId;
 
     String academicPlanSemesterName;
     String academicPlanId;
-    Short academicPlanSemesterNumber;
+    Integer academicPlanSemesterNumber;
     String academicPlanDisciplineBlock;
     String academicPlanTypeOfBlock;
     String academicPlanDisciplineName;
@@ -38,7 +40,7 @@ public class Discipline {
     Integer academicPlanDisciplineZET;
     Float academicPlanDisciplineFormZET;
 
-    @ElementCollection
+    @Transient
     @JsonProperty("DisciplineResultsList")
     List<String> DisciplineResultsList  = new ArrayList<>();
 
@@ -60,3 +62,5 @@ public class Discipline {
     )
     List<DisciplineResult> disciplineResults = new ArrayList<>();
 }
+
+

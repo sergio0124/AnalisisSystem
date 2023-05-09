@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import org.example.plan.Plan;
 import org.example.plan.PlanService;
 import org.example.user.User;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -20,22 +23,48 @@ import java.util.Optional;
 @AllArgsConstructor
 public class PlanController {
     PlanService planService;
+    final int PAGE_SIZE = 20;
 
     @GetMapping("/plan/")
-    String getPlan(Map<String, Object> model,
+    String getPlan(@RequestParam(value = "search", required = false) Optional<String> search,
+                    Map<String, Object> model,
                    @AuthenticationPrincipal User user) {
-        List<Plan> plans = planService.getAllPlans();
+        Pageable pageable = PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.ASC, "academicPlanSpecialtyProfile"));
+
+        List<PlanDTO> plans;
+        if (search.isPresent()){
+            plans = planService.getPlansByAcademicName(search.get(), pageable);
+        } else {
+            plans = planService.getAllPlansByPage(pageable);
+        }
 
         model.put("plans", plans);
         model.put("user", user);
-        return "planPage";
+        return "plan_page";
+    }
+
+
+    @PostMapping("/plan/")
+    public ResponseEntity<List<PlanDTO>> getPlansByPage(@RequestParam(value = "search", required = false) Optional<String> search,
+                                                        @RequestParam Integer page){
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE, Sort.by(Sort.Direction.ASC, "academicPlanSpecialtyProfile"));
+
+        List<PlanDTO> plans;
+        if (search.isPresent()){
+            plans = planService.getPlansByAcademicName(search.get(), pageable);
+        } else {
+            plans = planService.getAllPlansByPage(pageable);
+        }
+
+        return ResponseEntity.ok(plans);
     }
 
     @PostMapping("/plan/load")
-    ResponseEntity<String> loadPlan() {
+    ResponseEntity<String> loadPlan(@RequestParam Integer start,
+                                    @RequestParam Integer end) {
 
         try {
-            planService.getPlanAndSave();
+            planService.getPlanAndSave(start, end);
             return ResponseEntity.ok("Планы обновлены");
         } catch (Exception ex) {
             return ResponseEntity.status(500).body(ex.getMessage());

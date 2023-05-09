@@ -14,7 +14,7 @@ import java.util.List;
 public class DisciplineDTO {
 
 
-    Long id;
+    String id;
     String academicPlanDisciplineId;
 
     String academicPlanSemesterName;

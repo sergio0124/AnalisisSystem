@@ -14,13 +14,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByUsername(String username);
     Boolean existsByUsername(String username);
-    List<User> findUsersByUsernameContainsIgnoreCase(String loginPart);
 
     Optional<User> findUserById(Long id);
 
-    List<User> findUsersByRolesIsIn(Set<Role> roles);
+    Page<User> findUsersByRolesIsIn(Set<Role> roles, Pageable pageable);
 
-    List<User> findUsersByRolesIsInAndUsernameContainsIgnoreCase(Set<Role> roles, String username);
+    Page<User> findUsersByRolesInAndUsernameContainsIgnoreCaseOrRolesInAndFullnameContainsIgnoreCase(Set<Role> roles, String username, Set<Role> roles2, String fullname, Pageable pageable);
 
     Optional<User> findUserByActivationCode(String activationCode);
 }

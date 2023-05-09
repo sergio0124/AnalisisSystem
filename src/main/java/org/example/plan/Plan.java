@@ -3,6 +3,7 @@ package org.example.plan;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.example.discipline.Discipline;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.List;

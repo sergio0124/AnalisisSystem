@@ -12,7 +12,7 @@ public class DisciplineResultMapping {
             return null;
         }
         DisciplineResultDTO disciplineResultDTO = mapper.map(disciplineResult, DisciplineResultDTO.class);
-        disciplineResultDTO.setId(disciplineResult.getId().toString());
+        disciplineResultDTO.setId(disciplineResult.getId());
         return disciplineResultDTO;
     }
 
@@ -20,7 +20,7 @@ public class DisciplineResultMapping {
     public DisciplineResult mapToDisciplineResultEntity(DisciplineResultDTO disciplineResultDTO) {
         DisciplineResult disciplineResult = mapper.map(disciplineResultDTO, DisciplineResult.class);
         if (!"".equals(disciplineResultDTO.getId())) {
-            disciplineResult.setId(Long.parseLong(disciplineResultDTO.getId()));
+            disciplineResult.setId(disciplineResultDTO.getResultId());
         }
         return disciplineResult;
     }

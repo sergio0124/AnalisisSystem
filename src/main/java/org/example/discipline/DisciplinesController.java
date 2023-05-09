@@ -8,12 +8,19 @@ import org.example.comparison.Comparison;
 import org.example.discipline.Discipline;
 import org.example.discipline.DisciplineService;
 import org.example.plan.Plan;
+import org.example.plan.PlanDTO;
 import org.example.plan.PlanService;
 import org.example.user.User;
 import org.example.user.UserMapping;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -24,6 +31,7 @@ import java.util.Optional;
 @Controller
 @AllArgsConstructor
 public class DisciplinesController {
+    private final Integer PAGE_SIZE = 20;
     DisciplineService disciplineService;
     UserMapping userMapping;
     PlanService planService;
@@ -34,24 +42,46 @@ public class DisciplinesController {
     String showDisciplines(Map<String, Object> model,
                            @RequestParam(required = false) Optional<String> academicPlanId,
                            @AuthenticationPrincipal User user) {
-        List<Plan> plans = planService.getAllPlans();
-        List<Discipline> disciplines;
+        List<PlanDTO> plans = planService.getAllPlans();
+        List<DisciplineDTO> disciplines;
+
+        Pageable pageable = PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.ASC, "academicPlanDisciplineName"));
         if (academicPlanId.isPresent()) {
             String id = academicPlanId.get();
-            disciplines = disciplineService.getDisciplinesByPlanId(id);
+            disciplines = disciplineService.getDisciplinesByPlanId(id, pageable);
         } else {
-            disciplines = disciplineService.getDisciplinesByPlanId(plans.get(0).getAcademicPlanId());
+            disciplines = disciplineService.getDisciplinesByPlanId(plans.get(0).getAcademicPlanId(), pageable);
         }
         model.put("disciplines", disciplines);
         model.put("user", user);
         model.put("plans", plans);
-        return "discplinePage";
+        return "discpline_page";
+    }
+
+
+    @PostMapping("disciplines/")
+    ResponseEntity<List<DisciplineDTO>> showDisciplines(
+            @RequestParam(required = false) Optional<String> academicPlanId,
+            @RequestParam Integer page,
+            @RequestParam(required = false) Optional<String> search) {
+        List<PlanDTO> plans = planService.getAllPlans();
+
+        Pageable pageable = PageRequest.of(
+                page, PAGE_SIZE);
+        if (academicPlanId.isPresent()) {
+            String id = academicPlanId.get();
+            return ResponseEntity.ok(
+                    disciplineService.getDisciplinesByPlanId(id, pageable));
+        } else {
+            return ResponseEntity.ok(
+                    disciplineService.getDisciplinesByPlanId(plans.get(0).getAcademicPlanId(), pageable));
+        }
     }
 
 
     @GetMapping("/disciplines/books")
     public String getDisciplinePage(@AuthenticationPrincipal User user,
-                                    @RequestParam() Long disciplineId,
+                                    @RequestParam() String disciplineId,
                                     Map<String, Object> model) {
 
         Discipline discipline = disciplineService.getDisciplineById(disciplineId);
@@ -62,11 +92,11 @@ public class DisciplinesController {
                 .map(v -> bookMapping.mapToBookDTO(v))
                 .toList();
 
-        books.forEach(v->{
+        books.forEach(v -> {
             v.setComparisons(v
                     .getComparisons()
                     .stream()
-                    .filter(comp-> Objects.equals(comp.getDiscipline().getId(), disciplineId))
+                    .filter(comp -> Objects.equals(comp.getDiscipline().getId(), disciplineId))
                     .toList());
         });
 
@@ -74,6 +104,6 @@ public class DisciplinesController {
         model.put("discipline", disciplineMapping.mapToDisciplineDto(discipline));
         model.put("user", userMapping.mapToUserDto(user));
 
-        return "disicplineBooks";
+        return "disicpline_books";
     }
 }

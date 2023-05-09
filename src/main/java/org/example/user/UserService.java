@@ -3,6 +3,7 @@ package org.example.user;
 import com.mysql.cj.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.example.service.MailSenderService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -117,21 +118,21 @@ public class UserService implements UserDetailsService {
         return userMapping.mapToUserDto(user);
     }
 
-    public List<UserDTO> findUsersByRole(Collection<Role> roles) {
-        return userRepo.findUsersByRolesIsIn(new HashSet<>(roles))
+    public List<UserDTO> findUsersByRole(Collection<Role> roles, Pageable pageable) {
+        return userRepo.findUsersByRolesIsIn(new HashSet<>(roles), pageable)
                 .stream()
                 .map(userMapping::mapToUserDto)
                 .toList();
     }
 
     public List<UserDTO> findUsersByRoleAndSearch(Collection<Role> roles,
-                                                  String search) {
-        return userRepo.findUsersByRolesIsInAndUsernameContainsIgnoreCase(
-                        new HashSet<>(roles), search)
+                                                  String search,
+                                                  Pageable pageable) {
+        return userRepo.findUsersByRolesInAndUsernameContainsIgnoreCaseOrRolesInAndFullnameContainsIgnoreCase(
+                        new HashSet<>(roles), search,  new HashSet<>(roles), search, pageable)
                 .stream()
                 .map(userMapping::mapToUserDto)
                 .toList();
-
     }
 
     public void blockUser(UserDTO user) {
