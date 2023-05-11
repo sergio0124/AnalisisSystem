@@ -33,7 +33,7 @@ function update_data(page_number, plan_list) {
     if (page_number > 1) {
         before.disabled = false;
     }
-    if (plan_list.length === 10) {
+    if (plan_list.length === 20) {
         after.disabled = false;
     }
 

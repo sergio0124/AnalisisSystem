@@ -36,8 +36,6 @@ public class DisciplineDTO {
 
     List<String> DisciplineResultsList = new ArrayList<>();
 
-    Plan plan;
-
     List<Comparison> comparisons;
 
     List<DisciplineResultDTO> disciplineResults = new ArrayList<>();

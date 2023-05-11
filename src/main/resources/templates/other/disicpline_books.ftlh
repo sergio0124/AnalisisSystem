@@ -92,11 +92,14 @@
                 , ${discipline.academicPlanForm}, ${discipline.academicPlanSemesterName}
             </div>
 
-            <div style="margin-top: 10px">
-                <button class="btn btn-primary me-md-2" type="button" onclick="subscribe_discipline(${discipline.id})">
-                    Подписаться
-                </button>
-            </div>
+            <#list user.roles?filter(x -> x == "TEACHER") as x>
+                <div style="margin-top: 10px">
+                    <button class="btn btn-primary me-md-2" type="button" onclick="subscribe_discipline(${discipline.id})">
+                        Подписаться
+                    </button>
+                </div>
+            </#list>
+
 
         </div>
 

@@ -28,7 +28,7 @@ public class DisciplineResult {
     @JsonProperty
     String DisciplineResultNameFull;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "result_discipline",
             joinColumns = {@JoinColumn(name = "result_id")},

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -16,16 +17,19 @@ public class DisciplineService {
         disciplineRepository.saveAll(disciplines);
     }
 
-    public List<DisciplineDTO> getDisciplinesByPlanId(String academicPlanId, Pageable pageable) {
+    public List<DisciplineDTO> getDisciplinesByPlanIdAndSearch(String academicPlanId, String search, Pageable pageable) {
         return disciplineRepository
-                .findDisciplineByAcademicPlanId(academicPlanId, pageable)
+                .findDisciplineByAcademicPlanIdAndAcademicPlanDisciplineNameContainsIgnoreCase(academicPlanId, search, pageable)
                 .getContent()
                 .stream()
                 .map(disciplineMapping::mapToDisciplineDto)
                 .toList();
     }
 
-    public Discipline getDisciplineById(String id){
-        return disciplineRepository.findById(id).orElse(null);
+    public DisciplineDTO getDisciplineById(String id){
+        Optional<Discipline> discipline = disciplineRepository.findDisciplineByIdContaining(id);
+        return discipline.isPresent() ?
+                disciplineMapping.mapToDisciplineDto(discipline.orElse(null))
+                : null;
     }
 }

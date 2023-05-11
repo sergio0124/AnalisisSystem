@@ -1,18 +1,13 @@
 package org.example.discipline;
 
 import lombok.AllArgsConstructor;
-import org.example.book.Book;
 import org.example.book.BookDTO;
 import org.example.book.BookMapping;
 import org.example.comparison.Comparison;
-import org.example.discipline.Discipline;
-import org.example.discipline.DisciplineService;
-import org.example.plan.Plan;
 import org.example.plan.PlanDTO;
 import org.example.plan.PlanService;
 import org.example.user.User;
 import org.example.user.UserMapping;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -41,16 +36,18 @@ public class DisciplinesController {
     @GetMapping("disciplines/")
     String showDisciplines(Map<String, Object> model,
                            @RequestParam(required = false) Optional<String> academicPlanId,
+                           @RequestParam(required = false) Optional<String> search,
                            @AuthenticationPrincipal User user) {
         List<PlanDTO> plans = planService.getAllPlans();
+        String originalSearch = search.orElse("");
         List<DisciplineDTO> disciplines;
 
         Pageable pageable = PageRequest.of(0, PAGE_SIZE, Sort.by(Sort.Direction.ASC, "academicPlanDisciplineName"));
         if (academicPlanId.isPresent()) {
             String id = academicPlanId.get();
-            disciplines = disciplineService.getDisciplinesByPlanId(id, pageable);
+            disciplines = disciplineService.getDisciplinesByPlanIdAndSearch(id, originalSearch, pageable);
         } else {
-            disciplines = disciplineService.getDisciplinesByPlanId(plans.get(0).getAcademicPlanId(), pageable);
+            disciplines = disciplineService.getDisciplinesByPlanIdAndSearch(plans.get(0).getAcademicPlanId(), originalSearch, pageable);
         }
         model.put("disciplines", disciplines);
         model.put("user", user);
@@ -65,16 +62,17 @@ public class DisciplinesController {
             @RequestParam Integer page,
             @RequestParam(required = false) Optional<String> search) {
         List<PlanDTO> plans = planService.getAllPlans();
+        String originalSearch = search.orElse("");
 
         Pageable pageable = PageRequest.of(
-                page, PAGE_SIZE);
+                page, PAGE_SIZE, Sort.by(Sort.Direction.ASC, "academicPlanDisciplineName"));
         if (academicPlanId.isPresent()) {
             String id = academicPlanId.get();
             return ResponseEntity.ok(
-                    disciplineService.getDisciplinesByPlanId(id, pageable));
+                    disciplineService.getDisciplinesByPlanIdAndSearch(id, originalSearch, pageable));
         } else {
             return ResponseEntity.ok(
-                    disciplineService.getDisciplinesByPlanId(plans.get(0).getAcademicPlanId(), pageable));
+                    disciplineService.getDisciplinesByPlanIdAndSearch(plans.get(0).getAcademicPlanId(), originalSearch, pageable));
         }
     }
 
@@ -84,7 +82,13 @@ public class DisciplinesController {
                                     @RequestParam() String disciplineId,
                                     Map<String, Object> model) {
 
-        Discipline discipline = disciplineService.getDisciplineById(disciplineId);
+        DisciplineDTO discipline = disciplineService.getDisciplineById(disciplineId);
+
+        if (discipline == null) {
+            model.put("user", userMapping.mapToUserDto(user));
+            return "disicpline_books";
+        }
+
         List<BookDTO> books = discipline
                 .getComparisons()
                 .stream()
@@ -101,7 +105,7 @@ public class DisciplinesController {
         });
 
         model.put("books", books);
-        model.put("discipline", disciplineMapping.mapToDisciplineDto(discipline));
+        model.put("discipline", discipline);
         model.put("user", userMapping.mapToUserDto(user));
 
         return "disicpline_books";

@@ -18,8 +18,6 @@ import java.util.List;
 public class Discipline {
 
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
     String id;
     String academicPlanDisciplineId;
 
@@ -42,24 +40,19 @@ public class Discipline {
 
     @Transient
     @JsonProperty("DisciplineResultsList")
-    List<String> DisciplineResultsList  = new ArrayList<>();
+    List<String> DisciplineResultsList = new ArrayList<>();
 
     @ManyToOne()
     @JoinColumn(name = "plan_id")
     Plan plan;
 
-    @OneToMany(mappedBy = "discipline", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "discipline", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     List<Comparison> comparisons;
 
     @OneToMany(mappedBy = "discipline", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     List<Subscribe> subscribes;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(
-            name = "result_discipline",
-            joinColumns = { @JoinColumn(name = "discipline_id") },
-            inverseJoinColumns = { @JoinColumn(name = "result_id") }
-    )
+    @ManyToMany(mappedBy = "disciplines", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     List<DisciplineResult> disciplineResults = new ArrayList<>();
 }
 

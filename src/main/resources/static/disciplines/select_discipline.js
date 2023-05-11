@@ -11,3 +11,13 @@ function load_book(){
     alert("Функция пока не готова");
 }
 
+function search(){
+    let search = document.getElementById("search").value;
+    let url_string = window.location.href;
+    let url = new URL(url_string);
+    url.searchParams.set('search', search);
+
+    window.location.href = url.toString();
+
+}
+

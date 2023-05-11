@@ -37,22 +37,22 @@ public class PlanService {
     PlanMapping planMapping;
 
     private void savePlan(List<Plan> plans, List<DisciplineResult> disciplineResults) {
-        Map<String, DisciplineResult> map = new HashMap<>();
+        Map<String, DisciplineResult> stringDisciplineResultHashMap = new HashMap<>();
         for (DisciplineResult dr : disciplineResults) {
-            map.put(dr.getId(), dr);
+            stringDisciplineResultHashMap.put(dr.getId(), dr);
         }
-        plans.forEach(v -> {
-            v.getDisciplinesOfPlan().forEach(d -> {
-                d.setPlan(v);
-                var list = d.getDisciplineResults();
-                d.getDisciplineResultsList().forEach(rec -> {
-                    var res = map.get(rec);
-                    list.add(res);
-                    res.getDisciplines().add(d);
+        plans.forEach(plan -> {
+            plan.getDisciplinesOfPlan().forEach(discipline -> {
+//                discipline.setPlan(plan);
+                var disciplineResultList = discipline.getDisciplineResults();
+                discipline.getDisciplineResultsList().forEach(resultString -> {
+                    var resultForAdding = stringDisciplineResultHashMap.get(resultString);
+                    disciplineResultList.add(resultForAdding);
+//                    resultForAdding.getDisciplines().add(discipline);
                 });
             });
+            planRepository.save(plan);
         });
-        planRepository.saveAll(plans);
     }
 
     private void saveResults(List<DisciplineResult> disciplineResults) {
@@ -69,7 +69,7 @@ public class PlanService {
         uniteDisciplines(plans);
 
         savePlan(plans, results);
-        saveResults(results);
+//        saveResults(results);
     }
 
     private void uniteDisciplines(List<Plan> plans) {

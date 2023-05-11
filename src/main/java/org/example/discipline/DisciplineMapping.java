@@ -18,8 +18,6 @@ public class DisciplineMapping {
         }
 
         DisciplineDTO disciplineDTO = mapper.map(discipline, DisciplineDTO.class);
-        disciplineDTO.setDisciplineResults(discipline
-                .getDisciplineResults().stream().map(v->mapper.map(v, DisciplineResultDTO.class)).toList());
         return disciplineDTO;
     }
 
