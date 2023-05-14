@@ -25,10 +25,12 @@ public class BookMapping {
     }
 
     //из dto в entity
-    public Book mapToComparisonEntity(BookDTO bookDTO) {
+    public Book mapToBookEntity(BookDTO bookDTO) {
         var book = mapper.map(bookDTO, Book.class);
-        book.setComparisons(book
-                .getComparisons().stream().map(v->mapper.map(v, Comparison.class)).toList());
+        if (book.comparisons != null){
+            book.setComparisons(book
+                    .getComparisons().stream().map(v->mapper.map(v, Comparison.class)).toList());
+        }
         return book;
     }
 }

@@ -7,6 +7,7 @@ import org.example.user.User;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @Table(name = "Сomparison")
@@ -18,19 +19,19 @@ public class Comparison {
     Long id;
 
     @Enumerated(EnumType.STRING)
-    ComparisonType type;
+    ComparisonType type = ComparisonType.AUTO;
 
     Integer mark;
     String description;
-    Timestamp date;
+    Timestamp date = new Timestamp(new Date().getTime());
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     User user;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "book_id")
     Book book;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "discipline_id")
     Discipline discipline;
 }

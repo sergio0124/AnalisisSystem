@@ -21,6 +21,8 @@ public class Book {
     Timestamp creationDate;
     String author;
     String introduction;
+    String url;
+    Integer pages;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     List<Comparison> comparisons = new ArrayList<>();

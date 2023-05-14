@@ -15,6 +15,8 @@ public class BookDTO {
     Timestamp creationDate;
     String author;
     String introduction;
+    String url;
+    Integer pages;
 
     List<ComparisonDTO> comparisons;
 }

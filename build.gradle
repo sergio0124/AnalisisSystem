@@ -38,8 +38,10 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
     implementation 'com.google.code.gson:gson:2.10.1'
-    // https://mvnrepository.com/artifact/org.modelmapper/modelmapper
     implementation 'org.modelmapper:modelmapper:3.1.1'
+    implementation 'com.itextpdf:itextpdf:5.5.13.3'
+
+    implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.9.1'
 }
 
 test {

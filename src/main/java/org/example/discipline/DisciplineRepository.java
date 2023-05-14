@@ -12,5 +12,5 @@ public interface DisciplineRepository extends JpaRepository<Discipline, String> 
     Page<Discipline> findDisciplineByAcademicPlanIdAndAcademicPlanDisciplineNameContainsIgnoreCase(String academicPlanId, String search, Pageable pageable);
     List<Discipline> findDisciplineByAcademicPlanId(String academicPlanId);
 
-    Optional<Discipline> findDisciplineByIdContaining(String id);
+    Discipline findDisciplineByIdContaining(String id);
 }

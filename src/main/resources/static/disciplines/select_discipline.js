@@ -7,9 +7,6 @@ function go_to_books(id){
     document.location.href = "/disciplines/books?disciplineId=" + id;
 }
 
-function load_book(){
-    alert("Функция пока не готова");
-}
 
 function search(){
     let search = document.getElementById("search").value;
