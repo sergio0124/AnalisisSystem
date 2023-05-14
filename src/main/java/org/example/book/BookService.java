@@ -1,5 +1,6 @@
 package org.example.book;
 
+import com.fasterxml.jackson.databind.deser.DataFormatReaders;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
@@ -98,15 +99,20 @@ public class BookService {
         }
 
         String author = info.split("/")[1];
-        pattern = Pattern.compile("[0-9]{1,3}с");
+        pattern = Pattern.compile("[0-9]{1,3} с");
         matcher = pattern.matcher(author);
         if (matcher.find()) {
-            bookDTO.setAuthor(author.substring(0, matcher.start() - 3));
-            bookDTO.setPages(
-                    Integer.parseInt(
-                            matcher.group(0).replaceAll("[^0-9]", "")
-                    )
-            );
+            bookDTO.setAuthor(author.substring(0, matcher.start() - 2));
+            try {
+                bookDTO.setPages(
+                        Integer.parseInt(
+                                matcher.group(0).replaceAll("[^0-9]", "")
+                        )
+                );
+            } catch (Exception exception) {
+                bookDTO.setPages(0);
+            }
+
         } else {
             bookDTO.setAuthor(author);
         }
@@ -117,12 +123,13 @@ public class BookService {
             String firstPage = PdfTextExtractor
                     .getTextFromPage(reader, 2, new SimpleTextExtractionStrategy());
 
-            Pattern startAnno = Pattern.compile("[0-9]{1,3}с.");
+            Pattern startAnno = Pattern.compile("[0-9]{1,3} с.");
             Pattern endAnno = Pattern.compile("УДК");
-            Matcher startAnnoMatcher = startAnno.matcher(author);
-            Matcher endAnnoMatcher = endAnno.matcher(author);
+            Matcher startAnnoMatcher = startAnno.matcher(firstPage);
+            Matcher endAnnoMatcher = endAnno.matcher(firstPage);
             if (startAnnoMatcher.find()) {
                 if (endAnnoMatcher.find()) {
+                    endAnnoMatcher.find();
                     bookDTO.setAnnotation(firstPage.substring(
                             startAnnoMatcher.end() + 2, endAnnoMatcher.start() - 1
                     ));
@@ -131,8 +138,7 @@ public class BookService {
 
             startAnno = Pattern.compile("Введение|ВВЕДЕНИЕ");
             endAnno = Pattern.compile("1\\.");
-            startAnnoMatcher = startAnno.matcher(author);
-            endAnnoMatcher = endAnno.matcher(author);
+            Pattern including = Pattern.compile("Содержание|СОДЕРЖАНИЕ");
             int pageNumber = 3;
             boolean overIntro = false;
             boolean over = false;
@@ -140,17 +146,24 @@ public class BookService {
             while (pageNumber <= 10 && !over) {
                 String curPage = PdfTextExtractor
                         .getTextFromPage(reader, pageNumber, new SimpleTextExtractionStrategy());
+                Matcher incMatch = including.matcher(curPage);
+                startAnnoMatcher = startAnno.matcher(curPage);
+                endAnnoMatcher = endAnno.matcher(curPage);
                 int startPos = 0;
                 int endPos = curPage.length();
                 if (startAnnoMatcher.find() && !overIntro) {
-                    overIntro = true;
-                    startPos = startAnnoMatcher.end();
+                    if (!incMatch.find() || incMatch.start() > 100) {
+                        overIntro = true;
+                        startPos = startAnnoMatcher.end();
+                    }
                 }
                 if (endAnnoMatcher.find()) {
                     over = true;
                     endPos = endAnnoMatcher.start() - 1;
                 }
-                stringBuilder.append(curPage.substring(startPos, endPos));
+                if (overIntro) {
+                    stringBuilder.append(curPage.substring(startPos, endPos));
+                }
                 pageNumber++;
             }
             bookDTO.setIntroduction(stringBuilder.toString());
