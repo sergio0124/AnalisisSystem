@@ -17,8 +17,6 @@ public class ComparisonDTO {
     Integer mark;
     String description;
     Timestamp date;
-
-    UserDTO user;
-    BookDTO book;
-    DisciplineDTO discipline;
+    String username;
+    String disciplineId;
 }

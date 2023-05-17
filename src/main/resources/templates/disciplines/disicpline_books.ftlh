@@ -4,7 +4,6 @@
 
     <script src="select_discipline.js"></script>
 
-    <script src="book.js"></script>
     <title>Книгообеспеченность дисциплины</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -85,7 +84,7 @@
     </nav>
     <div style="padding: 20px;">
         <div style="margin-top: 30px">
-            <h4>Книгообеспеченность дисциплины ${discipline.academicPlanDisciplineName}</h4>
+            <h4>Книгообеспеченность дисциплины "${discipline.academicPlanDisciplineName}"</h4>
 
             <h5>Данные о дисциплине:</h5>
 
@@ -96,7 +95,8 @@
 
             <#list user.roles?filter(x -> x == "TEACHER") as x>
                 <div style="margin-top: 10px">
-                    <button class="btn btn-primary me-md-2" type="button" onclick="subscribe_discipline(${discipline.id})">
+                    <button class="btn btn-primary me-md-2" type="button"
+                            onclick="subscribe_discipline(${discipline.id})">
                         Подписаться
                     </button>
                 </div>
@@ -127,34 +127,46 @@
                 <div style="padding:5px; width: 50%">
                     <h3>Данные:</h3>
                     <div><b>Название:</b> ${book.name}</div>
-                    <div><b>Аннотация:</b> ${book.anno}</div>
+                    <div><b>Аннотация:</b> ${book.annotation}</div>
                     <div><b>Автор:</b> ${book.author}</div>
-                    <div><b>Год:</b> ${book.year}</div>
+                    <div><b>Год:</b> ${book.creationDate?date}</div>
                 </div>
 
                 <div style="padding:5px; width: 50%">
                     <h3>Сопоставление:</h3>
-                    <div><b>Оценка:</b> ${book.name}</div>
-                    <div><b>Тип:</b> ${book.anno}</div>
-                    <div><b>Дата:</b> ${book.author}</div>
-                    <div><b>Описание:</b> ${book.year}</div>
+                    <div><b>Оценка:</b> ${book.comparisons?first.mark}</div>
+                    <div><b>Тип:</b> ${book.comparisons?first.type}</div>
+                    <div><b>Дата:</b> ${book.comparisons?first.date?date}</div>
+                    <div><b>Описание:</b> ${book.comparisons?first.description}</div>
+                    <div><b>Автор оценки:</b> ${book.comparisons?first.username}</div>
                 </div>
 
             </div>
 
 
-            <#list user.roles?filter(x -> x == "RULER") as x>
-                <div style="display: flex">
-                    <div style="align-items:center; padding:5px; width: 50%">
-                        <button class="btn btn-primary" style="margin-left: auto; margin-right: auto;"
-                                onclick="delete_book()">Удалить материал
-                        </button>
-                    </div>
-                    <div style="align-items:center; padding:5px; width: 50%">
-                        <button class="btn btn-primary" style="margin-left: auto; margin-right: auto;"
-                                onclick="compare_book()">Оценка сопоставимости
-                        </button>
-                    </div>
+            <#list user.roles?filter(x -> x == "RULER" || x == "ADMIN") as x>
+                <div style="width: 500px; justify-content: center; align-items: center; margin-top: 5px; margin-left: auto; margin-right: auto;">
+                    <div hidden="true" id="bookId">${book.id}</div>
+                    <div hidden="true" id="disciplineId">${discipline.id}</div>
+                    <div hidden="true" id="comparisonId">${book.comparisons?first.id}</div>
+                    <script src="book.js"></script>
+                    <button class="btn btn-primary" style="margin-left: 10px; margin-right: 10px;"
+                            onclick="delete_book()">Удалить материал
+                    </button>
+                    <button class="btn btn-primary" style="margin-left: auto; margin-right: auto;"
+                            onclick="refactor_book()">Редактировать информацию
+                    </button>
+                </div>
+            </#list>
+            <#list user.roles?filter(x -> x == "TEACHER") as x>
+                <div style="width: 500px; justify-content: center; align-items: center; margin-top: 5px; margin-left: auto; margin-right: auto;">
+                    <div hidden="true" id="bookId">${book.id}</div>
+                    <div hidden="true" id="disciplineId">${discipline.id}</div>
+                    <div hidden="true" id="comparisonId">${book.comparisons?first.id}</div>
+                    <script src="book.js"></script>
+                    <button class="btn btn-primary" style="margin-left: 10px; margin-right: 10px;"
+                            onclick="check_book()">Просмотреть информацию
+                    </button>
                 </div>
             </#list>
 

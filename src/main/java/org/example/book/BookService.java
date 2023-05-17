@@ -6,10 +6,12 @@ import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
 import lombok.AllArgsConstructor;
 import org.example.comparison.Comparison;
+import org.example.comparison.ComparisonRepository;
+import org.example.comparison.ComparisonService;
+import org.example.comparison.ComparisonType;
 import org.example.discipline.Discipline;
 import org.example.discipline.DisciplineDTO;
 import org.example.discipline.DisciplineRepository;
-import org.example.discipline.DisciplineService;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -20,11 +22,9 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +38,15 @@ public class BookService {
     BookRepository bookRepository;
     BookMapping bookMapping;
     DisciplineRepository disciplineRepository;
+    ComparisonRepository comparisonRepository;
+    ComparisonService comparisonService;
+
+    public BookDTO findBookById(Long id) {
+        Book book = bookRepository.findById(id).orElse(null);
+        return book != null ?
+                bookMapping.mapToBookDTO(book)
+                : null;
+    }
 
     private List<BookDTO> findBooksBySelectAndString(String search, String select, WebDriver driver) {
         driver.get("http://venec.ulstu.ru/lib/");
@@ -76,20 +85,155 @@ public class BookService {
         return books;
     }
 
-    public void saveBook(BookDTO bookDTO, String disciplineId) {
-        String info = bookDTO.getName();
-        bookDTO.setName(info.split("/")[0]);
+    public BookDTO parseBookByPdf(String url) {
+        String fileName = url.replaceAll("[^a-zA-Z0-9]", "a") + ".pdf";
+        BookDTO bookDTO = new BookDTO();
+        try {
+            PdfReader reader = loadPdf(url, fileName);
+            String firstPage = PdfTextExtractor
+                    .getTextFromPage(reader, 2, new SimpleTextExtractionStrategy());
 
-        Pattern pattern = Pattern.compile("Дата создания: .{10};");
+            // searching string like as characteristic in search
+            String fullNameAndOther;
+            Pattern pagePattern = Pattern.compile("[0-9]{1,3} с");
+            Matcher pageMatcher = pagePattern.matcher(firstPage);
+            int pageIndex = 0;
+            if (pageMatcher.find()) {
+                pageIndex = pageMatcher.start();
+            }
+            Pattern spacePattern = Pattern.compile("\n");
+            Matcher spaceMatcher = spacePattern.matcher(firstPage);
+            int spaceIndex = 0;
+            while (spaceIndex < pageIndex && spaceMatcher.find()) {
+                if (spaceMatcher.start() < pageIndex) {
+                    spaceIndex = spaceMatcher.start();
+                } else {
+                    break;
+                }
+            }
+            fullNameAndOther = firstPage.substring(spaceIndex, pageIndex);
+            bookDTO.setName(fullNameAndOther.split("/")[0]);
+            if (bookRepository.findBookByNameContainingIgnoreCase(bookDTO.getName()) != null) {
+                return null;
+            }
+
+            // getting name
+            bookDTO.setName(fullNameAndOther.split("/")[0]);
+            if (bookRepository.findBookByNameContainingIgnoreCase(bookDTO.getName()) != null) {
+                return null;
+            }
+
+            // getting info about author
+            String author = fullNameAndOther.split("/")[1];
+            Pattern pattern = Pattern.compile("[0-9]{1,3} с");
+            Matcher matcher = pattern.matcher(author);
+            if (matcher.find()) {
+                bookDTO.setAuthor(author.substring(0, matcher.start() - 2));
+                try {
+                    bookDTO.setPages(
+                            Integer.parseInt(
+                                    matcher.group(0).replaceAll("[^0-9]", "")
+                            )
+                    );
+                } catch (Exception exception) {
+                    bookDTO.setPages(0);
+                }
+
+            } else {
+                bookDTO.setAuthor(author);
+            }
+
+            // getting data from author
+            String data = bookDTO.getAuthor().replaceAll("[^0-9]", "");
+            if (matcher.find()) {
+                try {
+                    bookDTO.setCreationDate(
+                            new Timestamp(
+                                    new SimpleDateFormat("yyyy")
+                                            .parse(data)
+                                            .getTime()
+                            )
+                    );
+                } catch (ParseException e) {
+                    bookDTO.setCreationDate(new Timestamp(new Date().getTime()));
+                }
+            }
+
+            // getting annotation from pdf
+            Pattern startAnno = Pattern.compile("[0-9]{1,3} с.");
+            Pattern endAnno = Pattern.compile("УДК");
+            Matcher startAnnoMatcher = startAnno.matcher(firstPage);
+            Matcher endAnnoMatcher = endAnno.matcher(firstPage);
+            if (startAnnoMatcher.find()) {
+                if (endAnnoMatcher.find()) {
+                    endAnnoMatcher.find();
+                    bookDTO.setAnnotation(firstPage.substring(
+                            startAnnoMatcher.end() + 2, endAnnoMatcher.start() - 1
+                    ));
+                }
+            }
+
+            // trying to get introduction
+            startAnno = Pattern.compile("Введение|ВВЕДЕНИЕ");
+            endAnno = Pattern.compile("1\\.");
+            Pattern including = Pattern.compile("Содержание|СОДЕРЖАНИЕ|Оглавление|ОГЛАВЛЕНИЕ");
+            int pageNumber = 3;
+            boolean overIntro = false;
+            boolean over = false;
+            StringBuilder stringBuilder = new StringBuilder();
+            while (pageNumber <= 10 && !over) {
+                String curPage = PdfTextExtractor
+                        .getTextFromPage(reader, pageNumber, new SimpleTextExtractionStrategy());
+                Matcher incMatch = including.matcher(curPage);
+                startAnnoMatcher = startAnno.matcher(curPage);
+                endAnnoMatcher = endAnno.matcher(curPage);
+                int startPos = 0;
+                int endPos = curPage.length();
+                if (startAnnoMatcher.find() && !overIntro) {
+                    if (!incMatch.find() || incMatch.start() > 100) {
+                        overIntro = true;
+                        startPos = startAnnoMatcher.end();
+                    }
+                }
+                if (endAnnoMatcher.find() && overIntro) {
+                    int end = endAnnoMatcher.start();
+                    if (startPos < end) {
+                        over = true;
+                        endPos = endAnnoMatcher.start() - 1;
+                    }
+                }
+                if (overIntro) {
+                    stringBuilder.append(curPage, startPos, endPos);
+                }
+                pageNumber++;
+            }
+            bookDTO.setIntroduction(stringBuilder.toString());
+        } catch (IOException e) {
+            return null;
+        }
+        File pdfFile = new File(fileName);
+        pdfFile.delete();
+        return bookDTO;
+    }
+
+    public BookDTO parseBookFromVenec(BookDTO bookDTO) {
+        String info = bookDTO.getName();
+        // getting name
+        bookDTO.setName(info.split("/")[0]);
+        if (bookRepository.findBookByNameContainingIgnoreCase(bookDTO.getName()) != null) {
+            return null;
+        }
+
+        // getting data
+        Pattern pattern = Pattern.compile("Дата создания: [0-9]{2}\\.[0-9]{2}\\.[0-9]{4}");
         Matcher matcher = pattern.matcher(info);
         if (matcher.find()) {
             try {
                 bookDTO.setCreationDate(
                         new Timestamp(
-                                new SimpleDateFormat("dd/MM/yyyy")
+                                new SimpleDateFormat("ddMMyyyy")
                                         .parse(matcher.group()
-                                                .split("[?:]")[1]
-                                                .trim())
+                                                .replaceAll("[^0-9]", ""))
                                         .getTime()
                         )
                 );
@@ -98,6 +242,7 @@ public class BookService {
             }
         }
 
+        // getting author
         String author = info.split("/")[1];
         pattern = Pattern.compile("[0-9]{1,3} с");
         matcher = pattern.matcher(author);
@@ -117,12 +262,14 @@ public class BookService {
             bookDTO.setAuthor(author);
         }
 
+        // anno and intro
+        String fileName = bookDTO.getUrl().replaceAll("[^a-zA-Z0-9]", "a") + ".pdf";
         try {
-            String fileName = bookDTO.getUrl().replaceAll("[^a-zA-Z0-9]", "a") + ".pdf";
-            PdfReader reader = loadPdf(bookDTO.url, fileName);
+            PdfReader reader = loadPdf(findUrlBySuburl(bookDTO.url), fileName);
             String firstPage = PdfTextExtractor
                     .getTextFromPage(reader, 2, new SimpleTextExtractionStrategy());
 
+            // getting anno
             Pattern startAnno = Pattern.compile("[0-9]{1,3} с.");
             Pattern endAnno = Pattern.compile("УДК");
             Matcher startAnnoMatcher = startAnno.matcher(firstPage);
@@ -136,9 +283,10 @@ public class BookService {
                 }
             }
 
+            // getting intro
             startAnno = Pattern.compile("Введение|ВВЕДЕНИЕ");
             endAnno = Pattern.compile("1\\.");
-            Pattern including = Pattern.compile("Содержание|СОДЕРЖАНИЕ");
+            Pattern including = Pattern.compile("Содержание|СОДЕРЖАНИЕ|Оглавление|ОГЛАВЛЕНИЕ");
             int pageNumber = 3;
             boolean overIntro = false;
             boolean over = false;
@@ -157,36 +305,51 @@ public class BookService {
                         startPos = startAnnoMatcher.end();
                     }
                 }
-                if (endAnnoMatcher.find()) {
-                    over = true;
-                    endPos = endAnnoMatcher.start() - 1;
+                if (endAnnoMatcher.find() && overIntro) {
+                    int end = endAnnoMatcher.start();
+                    if (startPos < end) {
+                        over = true;
+                        endPos = endAnnoMatcher.start() - 1;
+                    }
                 }
                 if (overIntro) {
-                    stringBuilder.append(curPage.substring(startPos, endPos));
+                    stringBuilder.append(curPage, startPos, endPos);
                 }
                 pageNumber++;
             }
             bookDTO.setIntroduction(stringBuilder.toString());
-
-            File pdfFile = new File(fileName);
-            pdfFile.delete();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        File pdfFile = new File(fileName);
+        pdfFile.delete();
+        return bookDTO;
+    }
+
+    public void saveBook(BookDTO bookDTO, String disciplineId) {
+        bookDTO = parseBookFromVenec(bookDTO);
+        if (bookDTO == null) {
+            return;
+        }
 
         Book book = bookMapping.mapToBookEntity(bookDTO);
+        book = bookRepository.save(book);
         Discipline discipline = disciplineRepository.findDisciplineByIdContaining(disciplineId);
+
         Comparison comparison = new Comparison();
         comparison.setBook(book);
         comparison.setDiscipline(discipline);
-        book.setComparisons(List.of(comparison));
-        bookRepository.save(book);
+        comparison.setDate(new Timestamp(new Date().getTime()));
+        comparison.setMark(0);
+        comparison.setType(ComparisonType.AUTO);
+        comparison.setDescription(" - ");
+
+        comparisonRepository.save(comparison);
     }
 
-    private PdfReader loadPdf(String url1, String fileName) throws IOException {
-        URL url = null;
-        URL obj = new URL(url1);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+    private String findUrlBySuburl(String sub_url) throws IOException {
+        URL url = new URL(sub_url);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
         con.setRequestProperty("User-Agent", "Mozilla/5.0");
         int responseCode = con.getResponseCode();
@@ -198,14 +361,21 @@ public class BookService {
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
+            in.close();
             Pattern pattern = Pattern.compile("\\./disk/[0-9]{4}/[a-zA-Z0-9а-яА-Я]*\\.pdf");
             Matcher matcher = pattern.matcher(response.toString());
             if (matcher.find()) {
-                url = new URL(matcher.group().replaceFirst("\\.", "http://lib.ulstu.ru/venec"));
+                return matcher.group().replaceFirst("\\.", "http://lib.ulstu.ru/venec");
+            } else {
+                return null;
             }
-            in.close();
-        }
 
+        }
+        return null;
+    }
+
+    private PdfReader loadPdf(String file_url, String fileName) throws IOException {
+        URL url = new URL(file_url);
         InputStream in = url.openStream();
         FileOutputStream fos = new FileOutputStream(fileName);
 
@@ -219,5 +389,12 @@ public class BookService {
 
         PdfReader reader = new PdfReader(fileName);
         return reader;
+    }
+
+    public void deleteBookById(Long bookId) {
+        Book book = bookRepository.findById(bookId).orElse(null);
+        if (book != null) {
+            bookRepository.delete(book);
+        }
     }
 }

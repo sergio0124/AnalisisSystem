@@ -100,13 +100,14 @@ public class DisciplinesController {
             v.setComparisons(v
                     .getComparisons()
                     .stream()
-                    .filter(comp -> Objects.equals(comp.getDiscipline().getId(), disciplineId))
-                    .toList());
+                    .filter(comp -> comp.getDisciplineId().contains(disciplineId))
+                    .toList()
+            );
         });
 
         model.put("books", books);
         model.put("discipline", discipline);
-        model.put("user", userMapping.mapToUserDto(user));
+        model.put("user", user);
 
         return "disicpline_books";
     }

@@ -3,6 +3,7 @@ package org.example.book;
 import lombok.AllArgsConstructor;
 import org.example.comparison.Comparison;
 import org.example.comparison.ComparisonDTO;
+import org.example.comparison.ComparisonMapping;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class BookMapping {
 
     private ModelMapper mapper;
+    private ComparisonMapping comparisonMapping;
 
     //из entity в dto
     public BookDTO mapToBookDTO(Book book) {
@@ -19,16 +21,18 @@ public class BookMapping {
         }
 
         BookDTO bookDTO = mapper.map(book, BookDTO.class);
-        bookDTO.setComparisons(book
-                .getComparisons().stream().map(v->mapper.map(v, ComparisonDTO.class)).toList());
+        if (book.getComparisons() != null){
+            bookDTO.setComparisons(book
+                    .getComparisons().stream().map(comparisonMapping::mapToComparisonDTO).toList());
+        }
         return bookDTO;
     }
 
     //из dto в entity
     public Book mapToBookEntity(BookDTO bookDTO) {
         var book = mapper.map(bookDTO, Book.class);
-        if (book.comparisons != null){
-            book.setComparisons(book
+        if (book.getComparisons() != null){
+            book.setComparisons(bookDTO
                     .getComparisons().stream().map(v->mapper.map(v, Comparison.class)).toList());
         }
         return book;

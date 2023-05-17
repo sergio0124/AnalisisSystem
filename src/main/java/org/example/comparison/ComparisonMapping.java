@@ -17,7 +17,14 @@ public class ComparisonMapping {
         if (comparison == null) {
             return null;
         }
-        return mapper.map(comparison, ComparisonDTO.class);
+        ComparisonDTO comparisonDTO = mapper.map(comparison, ComparisonDTO.class);
+        comparisonDTO.setDisciplineId(comparison.getDiscipline().getId());
+        if (comparison.getUser() != null) {
+            comparisonDTO.setUsername(comparison.getUser().getFullname());
+        } else {
+            comparisonDTO.setUsername(" - ");
+        }
+        return comparisonDTO;
     }
 
     //из dto в entity

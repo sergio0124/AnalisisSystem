@@ -8,6 +8,7 @@ import org.example.user.User;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @Table(name = "Сomparison")
@@ -34,4 +35,26 @@ public class Comparison {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "discipline_id")
     Discipline discipline;
+
+    @Override
+    public String toString() {
+        return "Comparison{" +
+                "id=" + id +
+                ", type=" + type +
+                ", mark=" + mark +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Comparison that = (Comparison) o;
+        return Objects.equals(id, that.id) && type == that.type && Objects.equals(mark, that.mark);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, type, mark);
+    }
 }

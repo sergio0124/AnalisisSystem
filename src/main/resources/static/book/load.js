@@ -58,3 +58,15 @@ function http_post(theUrl, inputData) {
     xmlHttp.send(inputData);
     return [xmlHttp.responseText, xmlHttp.status];
 }
+
+
+
+function load_url(){
+    let url = document.getElementById("load_url").value;
+    let response = http_post("/book/load/save_loaded?disciplineId=" + disciplineId, JSON.stringify(data));
+    if (response[1] == 200) {
+        history.back()
+    } else {
+        alert(response[0]);
+    }
+}
