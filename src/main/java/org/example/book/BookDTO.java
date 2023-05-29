@@ -4,6 +4,7 @@ import lombok.Data;
 import org.example.comparison.ComparisonDTO;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Data

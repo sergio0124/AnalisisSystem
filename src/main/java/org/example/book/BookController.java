@@ -69,6 +69,19 @@ public class BookController {
         return "book_page";
     }
 
+    @PostMapping("/book/update")
+    ResponseEntity<Object> updateBookAndComparison(@RequestBody BookDTO bookDTO,
+                        @AuthenticationPrincipal User user){
+        bookService.updateBook(bookDTO);
+        ComparisonDTO comparisonDTO = bookDTO.getComparisons().get(0);
+        if (comparisonDTO == null) {
+            return ResponseEntity.badRequest().body("Не получилось обновить сопоставление, обновление книги завершено");
+        }
+        comparisonDTO.setUsername(user.getUsername());
+        comparisonService.updateComparison(comparisonDTO);
+        return ResponseEntity.ok("Сохранение прошло успешно");
+    }
+
     @PostMapping("/book/delete")
     public ResponseEntity<Object> deleteBook(
             @RequestParam String disciplineId,

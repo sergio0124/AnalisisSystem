@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 
-    <script src="load.js"></script>
+    <script src="refactor.js"></script>
 
     <title>Книгообеспеченность дисциплины</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -99,8 +99,11 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Дата публикации</label>
-<#--                ${book.creationDate?date?string('yyyy')?number}-${book.creationDate?date?string('MM')?number}-${book.creationDate?date?string('dd')?number}-->
-                <input type="date" class="form-control" id="creationDate" value="${book.creationDate?date}">
+                <input type="date" class="form-control" id="creationDate" style="width: 180px" value="${book.creationDate?date?iso_utc}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Количество страниц</label>
+                <input type="text" class="form-control" id="pages" style="width: 180px" value="${book.pages}">
             </div>
             <div class="mb-3">
                 <label class="form-label">Автор</label>
@@ -139,6 +142,7 @@
 
             <div hidden="true" id="bookId">${book.id}</div>
             <div hidden="true" id="comparisonId">${comparison.id}</div>
+            <div hidden="true" id="disciplineId">${discipline.id}</div>
             <button type="submit" class="btn btn-primary" onclick="refactor()">Сохранить</button>
 
 

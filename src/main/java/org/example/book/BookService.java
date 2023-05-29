@@ -85,6 +85,21 @@ public class BookService {
         return books;
     }
 
+    public void updateBook(BookDTO bookDTO){
+        Book book = bookRepository.findById(bookDTO.getId()).orElse(null);
+        if (book == null) {
+            return;
+        }
+        book.setAnnotation(bookDTO.getAnnotation());
+        book.setAuthor(bookDTO.getAuthor());
+        book.setUrl(bookDTO.getUrl());
+        book.setName(bookDTO.getName());
+        book.setCreationDate(bookDTO.getCreationDate());
+        book.setIntroduction(bookDTO.getIntroduction());
+        book.setPages(bookDTO.getPages());
+        bookRepository.save(book);
+    }
+
     public BookDTO parseBookByPdf(String url) {
         String fileName = url.replaceAll("[^a-zA-Z0-9]", "a") + ".pdf";
         BookDTO bookDTO = new BookDTO();
@@ -176,6 +191,7 @@ public class BookService {
             // trying to get introduction
             startAnno = Pattern.compile("Введение|ВВЕДЕНИЕ");
             endAnno = Pattern.compile("1\\.");
+            Pattern altEndAnno = Pattern.compile("\n\n");
             Pattern including = Pattern.compile("Содержание|СОДЕРЖАНИЕ|Оглавление|ОГЛАВЛЕНИЕ");
             int pageNumber = 3;
             boolean overIntro = false;
@@ -187,6 +203,7 @@ public class BookService {
                 Matcher incMatch = including.matcher(curPage);
                 startAnnoMatcher = startAnno.matcher(curPage);
                 endAnnoMatcher = endAnno.matcher(curPage);
+                Matcher altEndMatcher = altEndAnno.matcher(curPage);
                 int startPos = 0;
                 int endPos = curPage.length();
                 if (startAnnoMatcher.find() && !overIntro) {
@@ -200,6 +217,12 @@ public class BookService {
                     if (startPos < end) {
                         over = true;
                         endPos = endAnnoMatcher.start() - 1;
+                    }
+                } else if (altEndMatcher.find() && overIntro){
+                    int end = altEndMatcher.start();
+                    if (startPos < end) {
+                        over = true;
+                        endPos = altEndMatcher.start() - 1;
                     }
                 }
                 if (overIntro) {
@@ -286,6 +309,7 @@ public class BookService {
             // getting intro
             startAnno = Pattern.compile("Введение|ВВЕДЕНИЕ");
             endAnno = Pattern.compile("1\\.");
+            Pattern altEndAnno = Pattern.compile("\n\n");
             Pattern including = Pattern.compile("Содержание|СОДЕРЖАНИЕ|Оглавление|ОГЛАВЛЕНИЕ");
             int pageNumber = 3;
             boolean overIntro = false;
@@ -297,6 +321,7 @@ public class BookService {
                 Matcher incMatch = including.matcher(curPage);
                 startAnnoMatcher = startAnno.matcher(curPage);
                 endAnnoMatcher = endAnno.matcher(curPage);
+                Matcher altEndMatcher = altEndAnno.matcher(curPage);
                 int startPos = 0;
                 int endPos = curPage.length();
                 if (startAnnoMatcher.find() && !overIntro) {
@@ -310,6 +335,12 @@ public class BookService {
                     if (startPos < end) {
                         over = true;
                         endPos = endAnnoMatcher.start() - 1;
+                    }
+                } else if (altEndMatcher.find() && overIntro){
+                    int end = altEndMatcher.start();
+                    if (startPos < end) {
+                        over = true;
+                        endPos = altEndMatcher.start() - 1;
                     }
                 }
                 if (overIntro) {
