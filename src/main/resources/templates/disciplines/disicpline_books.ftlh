@@ -3,6 +3,8 @@
 <head>
 
     <script src="select_discipline.js"></script>
+    <script src="book.js"></script>
+    <script src="subscribe.js"></script>
 
     <title>Книгообеспеченность дисциплины</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -23,9 +25,6 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/plan/">Планы</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Контингент студентов</a>
-                        </li>
 
                         <li class="nav-item">
                             <a class="nav-link" href="/admin/">Управление списком пользователей</a>
@@ -34,13 +33,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/disciplines/">Дисциплины</a>
                         </li>
-                    </#list>
-                    <#list user.roles?filter(x -> x == "TEACHER") as x>
+
                         <li class="nav-item">
-                            <a class="nav-link" href="/disciplines/">Дисциплины</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/books/">Методические материалы</a>
+                            <a class="nav-link" href="/report/">Отчеты</a>
                         </li>
 
                         <li class="nav-item">
@@ -48,15 +43,12 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="/notifications/">Уведомления</a>
+                            <a class="nav-link" href="/subscribes/events">Уведомления</a>
                         </li>
                     </#list>
-                    <#list user.roles?filter(x -> x == "RULER") as x>
+                    <#list user.roles?filter(x -> x == "TEACHER") as x>
                         <li class="nav-item">
                             <a class="nav-link" href="/disciplines/">Дисциплины</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/books/">Методические материалы</a>
                         </li>
 
                         <li class="nav-item">
@@ -68,16 +60,28 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Сопоставления</a>
+                            <a class="nav-link" href="/subscribes/events">Уведомления</a>
+                        </li>
+                    </#list>
+                    <#list user.roles?filter(x -> x == "RULER") as x>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/disciplines/">Дисциплины</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/subscribes/">Подписки</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/subscribes/events">Уведомления</a>
                         </li>
                     </#list>
                 </ul>
             </div>
             <div class="d-flex">
                 <ul class="navbar-nav">
-                    <a class="nav-link active" aria-current="page"
-                       href="/user/user_info">Пользователь: ${user.username}</a>
-                    <a class="nav-link active" aria-current="page" href="/logout">Выйти</a>
+                    <a class="nav-link active" aria-current="page" href="#">Пользователь: ${user.username}</a>
+                    <a class="nav-link" aria-current="page" href="/logout">Выйти</a>
                 </ul>
             </div>
         </div>
@@ -93,14 +97,10 @@
                 , ${discipline.academicPlanForm}, ${discipline.academicPlanSemesterName}
             </div>
 
-            <#list user.roles?filter(x -> x == "TEACHER") as x>
-                <div style="margin-top: 10px">
-                    <button class="btn btn-primary me-md-2" type="button"
-                            onclick="subscribe_discipline(${discipline.id})">
-                        Подписаться
-                    </button>
-                </div>
-            </#list>
+            <div style="margin-top: 10px">
+                <button class="btn btn-primary me-md-2" type="button" id="subscribe_button"
+                        onclick="subscribe_discipline(${discipline.id})"><#if subscribe>Отписаться<#else>Подписаться</#if></button>
+            </div>
 
 
         </div>
@@ -146,26 +146,26 @@
 
             <#list user.roles?filter(x -> x == "RULER" || x == "ADMIN") as x>
                 <div style="width: 500px; justify-content: center; align-items: center; margin-top: 5px; margin-left: auto; margin-right: auto;">
-                    <div hidden="true" id="bookId">${book.id}</div>
-                    <div hidden="true" id="disciplineId">${discipline.id}</div>
-                    <div hidden="true" id="comparisonId">${book.comparisons?first.id}</div>
+                    <div hidden="true" class="bookId">${book.id}</div>
+                    <div hidden="true" class="disciplineId">${discipline.id}</div>
+                    <div hidden="true" class="comparisonId">${book.comparisons?first.id}</div>
                     <script src="book.js"></script>
                     <button class="btn btn-primary" style="margin-left: 10px; margin-right: 10px;"
-                            onclick="delete_book()">Удалить материал
+                            onclick="delete_book(this.parentNode)">Удалить материал
                     </button>
                     <button class="btn btn-primary" style="margin-left: auto; margin-right: auto;"
-                            onclick="refactor_book()">Редактировать информацию
+                            onclick="refactor_book(this.parentNode)">Редактировать информацию
                     </button>
                 </div>
             </#list>
             <#list user.roles?filter(x -> x == "TEACHER") as x>
                 <div style="width: 500px; justify-content: center; align-items: center; margin-top: 5px; margin-left: auto; margin-right: auto;">
-                    <div hidden="true" id="bookId">${book.id}</div>
-                    <div hidden="true" id="disciplineId">${discipline.id}</div>
-                    <div hidden="true" id="comparisonId">${book.comparisons?first.id}</div>
+                    <div hidden="true" class="bookId">${book.id}</div>
+                    <div hidden="true" class="disciplineId">${discipline.id}</div>
+                    <div hidden="true" class="comparisonId">${book.comparisons?first.id}</div>
                     <script src="book.js"></script>
                     <button class="btn btn-primary" style="margin-left: 10px; margin-right: 10px;"
-                            onclick="check_book()">Просмотреть информацию
+                            onclick="check_book(this.parentNode)">Просмотреть информацию
                     </button>
                 </div>
             </#list>

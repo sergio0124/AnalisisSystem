@@ -6,6 +6,7 @@ import org.example.book.BookMapping;
 import org.example.comparison.Comparison;
 import org.example.plan.PlanDTO;
 import org.example.plan.PlanService;
+import org.example.subscribe.SubscribeService;
 import org.example.user.User;
 import org.example.user.UserMapping;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +33,7 @@ public class DisciplinesController {
     PlanService planService;
     DisciplineMapping disciplineMapping;
     BookMapping bookMapping;
+    SubscribeService subscribeService;
 
     @GetMapping("disciplines/")
     String showDisciplines(Map<String, Object> model,
@@ -108,6 +110,7 @@ public class DisciplinesController {
         model.put("books", books);
         model.put("discipline", discipline);
         model.put("user", user);
+        model.put("subscribe", subscribeService.isSubscribed(user.getId(), disciplineId));
 
         return "disicpline_books";
     }

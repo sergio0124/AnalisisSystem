@@ -43,12 +43,12 @@ public class PlanService {
         }
         plans.forEach(plan -> {
             plan.getDisciplinesOfPlan().forEach(discipline -> {
-//                discipline.setPlan(plan);
+                discipline.setPlan(plan);
                 var disciplineResultList = discipline.getDisciplineResults();
                 discipline.getDisciplineResultsList().forEach(resultString -> {
                     var resultForAdding = stringDisciplineResultHashMap.get(resultString);
                     disciplineResultList.add(resultForAdding);
-//                    resultForAdding.getDisciplines().add(discipline);
+                    resultForAdding.getDisciplines().add(discipline);
                 });
             });
             planRepository.save(plan);
@@ -182,4 +182,7 @@ public class PlanService {
                 });
         return list;
     }
+
+
+
 }

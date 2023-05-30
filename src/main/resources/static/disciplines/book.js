@@ -1,18 +1,20 @@
-let bookId = document.getElementById("bookId")
-    .innerHTML
-    .replace("&nbsp;", "");
-let disciplineId = document.getElementById("disciplineId")
-    .innerHTML
-    .replace("&nbsp;", "");
-let comparisonId = document.getElementById("comparisonId")
-    .innerHTML
-    .replace("&nbsp;", "");
+
 
 function load_book(id) {
     document.location.href = "/book/load?disciplineId=" + id;
 }
 
-function delete_book() {
+function delete_book(el) {
+    let bookId;
+    let disciplineId;
+    for (let i = 0; i < el.childNodes.length; i++) {
+        if (el.childNodes[i].className === "bookId") {
+            bookId = el.childNodes[i].innerHTML.replace("&nbsp;", '');
+        }
+        if (el.childNodes[i].className === "disciplineId") {
+            disciplineId = el.childNodes[i].innerHTML.replace("&nbsp;", '');
+        }
+    }
     let response = http_post(
         "/book/delete?disciplineId=" + disciplineId + "&bookId=" + bookId,
         []
@@ -32,12 +34,22 @@ function http_post(theUrl, inputData) {
     return [xmlHttp.responseText, xmlHttp.status];
 }
 
-function refactor_book() {
+function refactor_book(el) {
+    let bookId;
+    let disciplineId;
+    let comparisonId;
+    for (let i = 0; i < el.childNodes.length; i++) {
+        if (el.childNodes[i].className === "bookId") {
+            bookId = el.childNodes[i].innerHTML.replace("&nbsp;", '');
+        }
+        if (el.childNodes[i].className === "disciplineId") {
+            disciplineId = el.childNodes[i].innerHTML.replace("&nbsp;", '');
+        }
+        if (el.childNodes[i].className === "comparisonId") {
+            comparisonId = el.childNodes[i].innerHTML.replace("&nbsp;", '');
+        }
+    }
     document.location.href = "/book/update?bookId=" + bookId +
         "&disciplineId=" + disciplineId +
         "&comparisonId=" + comparisonId;
-}
-
-function check_book(){
-
 }

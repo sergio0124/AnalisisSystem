@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 public class ComparisonDTO {
     Long id;
 
-    ComparisonType type;
+    String type;
 
     Integer mark;
     String description;

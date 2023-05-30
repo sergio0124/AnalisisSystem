@@ -3,6 +3,7 @@ package org.example.discipline;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.example.comparison.Comparison;
+import org.example.event.Event;
 import org.example.plan.Plan;
 import org.example.result.DisciplineResult;
 import org.example.subscribe.Subscribe;
@@ -38,9 +39,6 @@ public class Discipline {
     Integer academicPlanDisciplineZET;
     Float academicPlanDisciplineFormZET;
 
-    @Transient
-    @JsonProperty("DisciplineResultsList")
-    List<String> DisciplineResultsList = new ArrayList<>();
 
     @ManyToOne()
     @JoinColumn(name = "plan_id")
@@ -50,10 +48,18 @@ public class Discipline {
     List<Comparison> comparisons;
 
     @OneToMany(mappedBy = "discipline", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    List<Event> events;
+
+    @OneToMany(mappedBy = "discipline", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     List<Subscribe> subscribes;
 
     @ManyToMany(mappedBy = "disciplines", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     List<DisciplineResult> disciplineResults = new ArrayList<>();
+
+
+    @Transient
+    @JsonProperty("DisciplineResultsList")
+    List<String> DisciplineResultsList = new ArrayList<>();
 }
 
 

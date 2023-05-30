@@ -3,6 +3,7 @@
 <head>
 
     <script src="load.js"></script>
+    <script src="onchange_select.js"></script>
 
     <title>Добавление материалов книгообеспеченности</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -23,9 +24,6 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/plan/">Планы</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Контингент студентов</a>
-                        </li>
 
                         <li class="nav-item">
                             <a class="nav-link" href="/admin/">Управление списком пользователей</a>
@@ -34,13 +32,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/disciplines/">Дисциплины</a>
                         </li>
-                    </#list>
-                    <#list user.roles?filter(x -> x == "TEACHER") as x>
+
                         <li class="nav-item">
-                            <a class="nav-link" href="/disciplines/">Дисциплины</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/books/">Методические материалы</a>
+                            <a class="nav-link" href="/report/">Отчеты</a>
                         </li>
 
                         <li class="nav-item">
@@ -48,15 +42,12 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="/notifications/">Уведомления</a>
+                            <a class="nav-link" href="/subscribes/events">Уведомления</a>
                         </li>
                     </#list>
-                    <#list user.roles?filter(x -> x == "RULER") as x>
+                    <#list user.roles?filter(x -> x == "TEACHER") as x>
                         <li class="nav-item">
                             <a class="nav-link" href="/disciplines/">Дисциплины</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/books/">Методические материалы</a>
                         </li>
 
                         <li class="nav-item">
@@ -68,16 +59,28 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Сопоставления</a>
+                            <a class="nav-link" href="/subscribes/events">Уведомления</a>
+                        </li>
+                    </#list>
+                    <#list user.roles?filter(x -> x == "RULER") as x>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/disciplines/">Дисциплины</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/subscribes/">Подписки</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/subscribes/events">Уведомления</a>
                         </li>
                     </#list>
                 </ul>
             </div>
             <div class="d-flex">
                 <ul class="navbar-nav">
-                    <a class="nav-link active" aria-current="page"
-                       href="/user/user_info">Пользователь: ${user.username}</a>
-                    <a class="nav-link active" aria-current="page" href="/logout">Выйти</a>
+                    <a class="nav-link active" aria-current="page" href="#">Пользователь: ${user.username}</a>
+                    <a class="nav-link" aria-current="page" href="/logout">Выйти</a>
                 </ul>
             </div>
         </div>
@@ -93,16 +96,34 @@
                 ${discipline.academicPlanDisciplineId}, ${discipline.academicPlanDisciplineName}
                 , ${discipline.academicPlanForm}, ${discipline.academicPlanSemesterName}
             </div>
+
+            <h5>Данные о плане:</h5>
+
+            <div>${plan.academicPlanQualificationName},
+                ${plan.academicPlanSpecialtyProfile}, ${plan.academicPlanStudyForm}
+                , ${plan.academicPlanComment}</div>
         </div>
 
+        <div hidden="hidden" id="disciplineId">${discipline.id}</div>
+
         <div style="margin-top: 30px;">
-            <h4>Поиск материалов:</h4>
-            <button class="btn btn-primary me-md-2" onclick="load_venec(${discipline.id})">Поиск по venec.ulstu</button>
-            <button class="btn btn-primary me-md-2" onclick="load_similar(${discipline.id})">Поиск материалов других дисциплин</button>
+            <h4>Поиск материалов (выберете опцию):</h4>
+            <select class="form-select" aria-label="Default select example" id="load_select" onchange="load_option()">
+                <option value="venec" selected="selected">Поиск по venec.ulstu</option>
+                <option value="disc">Поиск материалов других
+                    дисциплин
+                </option>
+                <option value="pdf">Загрузка материалов по
+                    ссылке на pdf файл
+                </option>
+            </select>
         </div>
 
         <div style="margin-top: 30px;" id="books_div">
-
+            <label>При нажатии кнопки будет выполнен поиск на портале venec.ulstu</label>
+            <div>
+                <button class="btn btn-primary me-md-2" type="button" onclick="load_venec(${discipline.id})">Поиск на портале</button>
+            </div>
         </div>
 
     </div>

@@ -16,15 +16,9 @@
             </a>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="/plan/">Планы</a>
-                    </li>
                     <#list user.roles?filter(x -> x == "ADMIN") as x>
                         <li class="nav-item">
                             <a class="nav-link" href="/plan/">Планы</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Контингент студентов</a>
                         </li>
 
                         <li class="nav-item">
@@ -34,13 +28,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/disciplines/">Дисциплины</a>
                         </li>
-                    </#list>
-                    <#list user.roles?filter(x -> x == "TEACHER") as x>
+
                         <li class="nav-item">
-                            <a class="nav-link" href="/disciplines/">Дисциплины</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/books/">Методические материалы</a>
+                            <a class="nav-link" href="/report/">Отчеты</a>
                         </li>
 
                         <li class="nav-item">
@@ -48,15 +38,12 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="/notifications/">Уведомления</a>
+                            <a class="nav-link" href="/subscribes/events">Уведомления</a>
                         </li>
                     </#list>
-                    <#list user.roles?filter(x -> x == "RULER") as x>
+                    <#list user.roles?filter(x -> x == "TEACHER") as x>
                         <li class="nav-item">
                             <a class="nav-link" href="/disciplines/">Дисциплины</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/books/">Методические материалы</a>
                         </li>
 
                         <li class="nav-item">
@@ -68,7 +55,20 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Сопоставления</a>
+                            <a class="nav-link" href="/subscribes/events">Уведомления</a>
+                        </li>
+                    </#list>
+                    <#list user.roles?filter(x -> x == "RULER") as x>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/disciplines/">Дисциплины</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/subscribes/">Подписки</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/subscribes/events">Уведомления</a>
                         </li>
                     </#list>
                 </ul>

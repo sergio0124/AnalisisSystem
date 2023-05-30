@@ -27,7 +27,7 @@ public class DisciplineService {
     }
 
     public DisciplineDTO getDisciplineById(String id){
-        Discipline discipline = disciplineRepository.findDisciplineByIdContaining(id);
+        Discipline discipline = disciplineRepository.findDisciplinesByIdContaining(id).get(0);
         return disciplineMapping.mapToDisciplineDto(discipline);
     }
 }

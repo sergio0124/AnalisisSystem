@@ -22,7 +22,7 @@ public class Book {
     String annotation;
     Timestamp creationDate;
     String author;
-    @Column(length = 5000)
+    @Column(length = 7000)
     String introduction;
     String url;
     Integer pages;

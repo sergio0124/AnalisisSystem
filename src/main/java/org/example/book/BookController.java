@@ -3,8 +3,12 @@ package org.example.book;
 import lombok.AllArgsConstructor;
 import org.example.comparison.ComparisonDTO;
 import org.example.comparison.ComparisonService;
+import org.example.discipline.Discipline;
 import org.example.discipline.DisciplineDTO;
 import org.example.discipline.DisciplineService;
+import org.example.event.EventService;
+import org.example.plan.PlanMapping;
+import org.example.plan.PlanService;
 import org.example.user.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +26,9 @@ public class BookController {
     BookService bookService;
     DisciplineService disciplineService;
     ComparisonService comparisonService;
+    PlanService planService;
+    PlanMapping planMapping;
+    EventService eventService;
 
     @GetMapping("/book/load")
     public String getLoadBookPage(@AuthenticationPrincipal User user,
@@ -31,6 +38,7 @@ public class BookController {
         DisciplineDTO disciplineDTO = disciplineService.getDisciplineById(disciplineId);
         model.put("discipline", disciplineDTO);
         model.put("user", user);
+        model.put("plan", planMapping.mapToPlanDTO(planService.getPlanById(disciplineDTO.getAcademicPlanId())));
         return "load_book_page";
     }
 
@@ -44,13 +52,20 @@ public class BookController {
     @PostMapping("/book/load/save_loaded")
     public ResponseEntity<Object> saveLoaded(
             @RequestBody BookDTO bookDTO,
-            @RequestParam String disciplineId) {
-        bookService.saveBook(bookDTO, disciplineId);
+            @RequestParam String disciplineId,
+            @AuthenticationPrincipal User user) {
+        BookDTO bookLoaded = bookService.parseBookFromVenec(bookDTO);
+        bookLoaded = bookService.saveBook(bookLoaded, disciplineId);
+        DisciplineDTO disciplineDTO = disciplineService.getDisciplineById(disciplineId);
+        eventService.saveEvent(disciplineId,
+                "Пользователь " + user.getFullname()
+                        + " (" + user.getUsername() + ") обновил книгообеспеченность дисциплины " + disciplineDTO.getAcademicPlanDisciplineName()
+                        + ". Была добавлена книга: " + bookLoaded.getName());
         return ResponseEntity.ok("Добавление закончено");
     }
 
     @GetMapping("/book/update")
-    public String checkBook(
+    public String updateBook(
             @RequestParam Long bookId,
             @RequestParam String disciplineId,
             @RequestParam Long comparisonId,
@@ -69,9 +84,29 @@ public class BookController {
         return "book_page";
     }
 
+    @GetMapping("/book/check")
+    public String checkBook(
+            @RequestParam Long bookId,
+            @RequestParam String disciplineId,
+            @RequestParam Long comparisonId,
+            Map<String, Object> map,
+            @AuthenticationPrincipal User user
+    ) {
+        ComparisonDTO comparisonDTO = comparisonService.getComparisonById(comparisonId);
+        DisciplineDTO disciplineDTO = disciplineService.getDisciplineById(disciplineId);
+        BookDTO bookDTO = bookService.findBookById(bookId);
+
+        map.put("comparison", comparisonDTO);
+        map.put("book", bookDTO);
+        map.put("discipline", disciplineDTO);
+        map.put("user", user);
+
+        return "check_book";
+    }
+
     @PostMapping("/book/update")
     ResponseEntity<Object> updateBookAndComparison(@RequestBody BookDTO bookDTO,
-                        @AuthenticationPrincipal User user){
+                                                   @AuthenticationPrincipal User user) {
         bookService.updateBook(bookDTO);
         ComparisonDTO comparisonDTO = bookDTO.getComparisons().get(0);
         if (comparisonDTO == null) {
@@ -79,13 +114,21 @@ public class BookController {
         }
         comparisonDTO.setUsername(user.getUsername());
         comparisonService.updateComparison(comparisonDTO);
+
+        DisciplineDTO disciplineDTO = disciplineService.getDisciplineById(comparisonDTO.getDisciplineId());
+        eventService.saveEvent(comparisonDTO.getDisciplineId(),
+                "Пользователь " + user.getFullname()
+                        + " (" + user.getUsername() + ") обновил книгообеспеченность дисциплины " + disciplineDTO.getAcademicPlanDisciplineName()
+                        + ". Была изменена книга: " + bookDTO.getName());
+
         return ResponseEntity.ok("Сохранение прошло успешно");
     }
 
     @PostMapping("/book/delete")
     public ResponseEntity<Object> deleteBook(
             @RequestParam String disciplineId,
-            @RequestParam Long bookId
+            @RequestParam Long bookId,
+            @AuthenticationPrincipal User user
     ) {
         BookDTO bookDTO = bookService.findBookById(bookId);
         if (bookDTO == null) {
@@ -94,9 +137,19 @@ public class BookController {
         if (bookDTO.getComparisons().stream().filter(c -> !c.getDisciplineId().contains(disciplineId)).count() > 1) {
             //Many comparisons
             comparisonService.deleteComparisonByDisciplineIdAndBookId(disciplineId, bookId);
+            DisciplineDTO disciplineDTO = disciplineService.getDisciplineById(disciplineId);
+            eventService.saveEvent(disciplineDTO.getId(),
+                    "Пользователь " + user.getFullname()
+                            + " (" + user.getUsername() + ") обновил книгообеспеченность дисциплины " + disciplineDTO.getAcademicPlanDisciplineName()
+                            + ". Была удалена связь дисциплины с книгой: " + bookDTO.getName());
             return ResponseEntity.ok("Книга будет убрана из книгообеспеченности дисциплины");
         } else {
             bookService.deleteBookById(bookId);
+            DisciplineDTO disciplineDTO = disciplineService.getDisciplineById(disciplineId);
+            eventService.saveEvent(disciplineDTO.getId(),
+                    "Пользователь " + user.getFullname()
+                            + " (" + user.getUsername() + ") обновил книгообеспеченность дисциплины " + disciplineDTO.getAcademicPlanDisciplineName()
+                            + ". Из системы была удалена книга: " + bookDTO.getName());
             return ResponseEntity.ok("Книга удалена из системы");
         }
     }
@@ -104,9 +157,35 @@ public class BookController {
 
     @PostMapping("/book/load/byurl")
     public ResponseEntity<Object> loadBookByUrl(
-            @RequestParam String bookUrl
+            @RequestParam String url,
+            @RequestParam String disciplineId,
+            @AuthenticationPrincipal User user
     ) {
-        BookDTO bookDTO = bookService.parseBookByPdf(bookUrl);
+        BookDTO bookDTO = bookService.parseBookByPdf(url);
+        bookService.saveBook(bookDTO, disciplineId);
+
+        DisciplineDTO disciplineDTO = disciplineService.getDisciplineById(disciplineId);
+        eventService.saveEvent(disciplineDTO.getId(),
+                "Пользователь " + user.getFullname()
+                        + " (" + user.getUsername() + ") обновил книгообеспеченность дисциплины " + disciplineDTO.getAcademicPlanDisciplineName()
+                        + ". Из системы была удалена книга: " + bookDTO.getName());
         return ResponseEntity.ok(bookDTO);
+    }
+
+
+    @PostMapping("/book/load/similar")
+    public ResponseEntity<Object> loadSimilar(@RequestParam String disciplineId) {
+        List<BookDTO> bookDTOS = comparisonService.loadAllBooksByDisciplineId(disciplineId);
+        return ResponseEntity.ok(bookDTOS);
+    }
+
+
+    @PostMapping("/book/load/add_exising")
+    public ResponseEntity<Object> addExisingBook(@RequestParam String disciplineId,
+                                                 @RequestParam Long bookId) {
+        BookDTO bookDTO = bookService.findBookById(bookId);
+        DisciplineDTO disciplineDTO = disciplineService.getDisciplineById(disciplineId);
+        comparisonService.createComparison(bookDTO, disciplineDTO);
+        return ResponseEntity.ok("Сопоставление добавлено");
     }
 }

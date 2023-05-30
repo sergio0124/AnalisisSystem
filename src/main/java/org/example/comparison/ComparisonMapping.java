@@ -24,6 +24,7 @@ public class ComparisonMapping {
         } else {
             comparisonDTO.setUsername(" - ");
         }
+        comparisonDTO.setType(comparison.getType().getTitle());
         return comparisonDTO;
     }
 

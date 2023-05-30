@@ -1,16 +1,14 @@
 package org.example.book;
 
-import com.fasterxml.jackson.databind.deser.DataFormatReaders;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
 import lombok.AllArgsConstructor;
-import org.example.comparison.Comparison;
 import org.example.comparison.ComparisonRepository;
 import org.example.comparison.ComparisonService;
-import org.example.comparison.ComparisonType;
 import org.example.discipline.Discipline;
 import org.example.discipline.DisciplineDTO;
+import org.example.discipline.DisciplineMapping;
 import org.example.discipline.DisciplineRepository;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -40,6 +38,7 @@ public class BookService {
     DisciplineRepository disciplineRepository;
     ComparisonRepository comparisonRepository;
     ComparisonService comparisonService;
+    DisciplineMapping disciplineMapping;
 
     public BookDTO findBookById(Long id) {
         Book book = bookRepository.findById(id).orElse(null);
@@ -114,9 +113,9 @@ public class BookService {
             Matcher pageMatcher = pagePattern.matcher(firstPage);
             int pageIndex = 0;
             if (pageMatcher.find()) {
-                pageIndex = pageMatcher.start();
+                pageIndex = pageMatcher.end();
             }
-            Pattern spacePattern = Pattern.compile("\n");
+            Pattern spacePattern = Pattern.compile("\n \n");
             Matcher spaceMatcher = spacePattern.matcher(firstPage);
             int spaceIndex = 0;
             while (spaceIndex < pageIndex && spaceMatcher.find()) {
@@ -156,16 +155,18 @@ public class BookService {
 
             } else {
                 bookDTO.setAuthor(author);
+                bookDTO.setPages(0);
             }
 
             // getting data from author
-            String data = bookDTO.getAuthor().replaceAll("[^0-9]", "");
+            pattern = Pattern.compile("[0-9]{4}\\.");
+            matcher = pattern.matcher(author);
             if (matcher.find()) {
                 try {
                     bookDTO.setCreationDate(
                             new Timestamp(
                                     new SimpleDateFormat("yyyy")
-                                            .parse(data)
+                                            .parse(matcher.group())
                                             .getTime()
                             )
                     );
@@ -357,25 +358,17 @@ public class BookService {
         return bookDTO;
     }
 
-    public void saveBook(BookDTO bookDTO, String disciplineId) {
-        bookDTO = parseBookFromVenec(bookDTO);
+    public BookDTO saveBook(BookDTO bookDTO, String disciplineId) {
         if (bookDTO == null) {
-            return;
+            return null;
         }
 
         Book book = bookMapping.mapToBookEntity(bookDTO);
         book = bookRepository.save(book);
-        Discipline discipline = disciplineRepository.findDisciplineByIdContaining(disciplineId);
+        Discipline discipline = disciplineRepository.findDisciplinesByIdContaining(disciplineId).get(0);
 
-        Comparison comparison = new Comparison();
-        comparison.setBook(book);
-        comparison.setDiscipline(discipline);
-        comparison.setDate(new Timestamp(new Date().getTime()));
-        comparison.setMark(0);
-        comparison.setType(ComparisonType.AUTO);
-        comparison.setDescription(" - ");
-
-        comparisonRepository.save(comparison);
+        comparisonService.createComparison(bookMapping.mapToBookDTO(book), disciplineMapping.mapToDisciplineDto(discipline));
+        return bookMapping.mapToBookDTO(book);
     }
 
     private String findUrlBySuburl(String sub_url) throws IOException {
@@ -393,7 +386,7 @@ public class BookService {
                 response.append(inputLine);
             }
             in.close();
-            Pattern pattern = Pattern.compile("\\./disk/[0-9]{4}/[a-zA-Z0-9а-яА-Я]*\\.pdf");
+            Pattern pattern = Pattern.compile("\\.[/_\\-a-zA-Z0-9а-яА-Я]*\\.pdf");
             Matcher matcher = pattern.matcher(response.toString());
             if (matcher.find()) {
                 return matcher.group().replaceFirst("\\.", "http://lib.ulstu.ru/venec");
@@ -423,9 +416,6 @@ public class BookService {
     }
 
     public void deleteBookById(Long bookId) {
-        Book book = bookRepository.findById(bookId).orElse(null);
-        if (book != null) {
-            bookRepository.delete(book);
-        }
+        bookRepository.findById(bookId).ifPresent(book -> bookRepository.delete(book));
     }
 }

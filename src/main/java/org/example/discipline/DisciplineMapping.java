@@ -17,8 +17,7 @@ public class DisciplineMapping {
             return null;
         }
 
-        DisciplineDTO disciplineDTO = mapper.map(discipline, DisciplineDTO.class);
-        return disciplineDTO;
+        return mapper.map(discipline, DisciplineDTO.class);
     }
 
     //из dto в entity

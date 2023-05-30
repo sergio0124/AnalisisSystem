@@ -30,6 +30,7 @@ public class UserController {
                               @AuthenticationPrincipal User user){
 
         if(bCryptPasswordEncoder.matches(userDTO.getOldPassword(), user.getPassword())) {
+            userDTO.setId(user.getId());
             userService.updateUser(userDTO);
             return ResponseEntity.ok("Данные изменены");
         } else {
