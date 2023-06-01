@@ -97,6 +97,18 @@
 
         </div>
 
+        <div style="margin-top: 30px">
+            <h3>Итоги</h3>
+            <div style="margin-top: 10px">
+                Незаполненных дисциплин: ${nodisc?size},
+                Частично заполненных: ${normdisc?size},
+                Заполненных: ${okdisc?size}
+            </div>
+            <div>
+
+            </div>
+        </div>
+
         <div style="margin-top: 40px;">
             <h3>Дисциплины без привязанных материалов:</h3>
             <div style="overflow-y: scroll; height:400px;">
@@ -208,17 +220,7 @@
         </div>
 
 
-        <div style="margin-top: 30px">
-            <h3>Итоги</h3>
-            <div style="margin-top: 10px">
-                Незаполненных дисциплин: ${nodisc?size},
-                Частично заполненных: ${normdisc?size},
-                Заполненных: ${okdisc?size}
-            </div>
-            <div>
 
-            </div>
-        </div>
 
 
     </div>

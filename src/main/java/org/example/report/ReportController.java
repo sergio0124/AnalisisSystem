@@ -129,7 +129,7 @@ public class ReportController {
         normdisc = sortDisciplinesByPriority(normdisc);
         okdisc = sortDisciplinesByPriority(okdisc);
 
-        model.put("user", userMapping.mapToUserDto(user));
+        model.put("user", user);
         model.put("nodisc", nodisc);
         model.put("normdisc", normdisc);
         model.put("okdisc", okdisc);

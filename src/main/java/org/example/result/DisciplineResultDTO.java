@@ -19,5 +19,4 @@ public class DisciplineResultDTO {
     String DisciplineResultName;
     String DisciplineResultNameFull;
 
-    List<DisciplineDTO> disciplines = new ArrayList<>();
 }

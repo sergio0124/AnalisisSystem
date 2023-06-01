@@ -38,7 +38,7 @@ public class AdminController {
             users = userService.findUsersByRole(List.of(Role.RULER, Role.TEACHER), pageable);
         }
         model.put("users", users);
-        model.put("user", userMapping.mapToUserDto(user));
+        model.put("user", user);
 
         return "users_list_page";
     }
@@ -73,7 +73,7 @@ public class AdminController {
                 model.put("ur", userDTO);
             }
         }
-        model.put("user", userMapping.mapToUserDto(user));
+        model.put("user", user);
 
         return "save_user";
     }
